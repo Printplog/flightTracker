@@ -1,3 +1,7 @@
+import { trackOrder } from "@/api/apiEndpoints";
+import useToolStore from "@/store/toolStore";
+import type { FormField } from "@/types";
+import { useQuery } from "@tanstack/react-query";
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -7,43 +11,43 @@ interface TrackingData {
   status: string;
   shipmentDate: string;
   destination: string;
-  currentStatus: "Processing" | "In Transit" | "Delivered";
+  currentStatus: "processing" | "in_transit" | "delivered";
   isTestShipment: boolean;
   estimatedDelivery: string;
-  carrier: string;
+  name: string;
+  email: string;
   weight: string;
-  value: string;
 }
 
 export default function TrackingComponent() {
-  const [trackingData, setTrackingData] = useState<TrackingData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [trackingData, setTrackingData] = useState<TrackingData>();
   const [params] = useSearchParams();
+  const id = params.get("trackingId") as string;
+  const { setFields, getFieldValue } = useToolStore()
 
-  const fetchTrackingData = (trackingId: string): TrackingData => {
-    return {
-      trackingId,
-      package: "Gold Bars",
-      status: "Active",
-      shipmentDate: "6/13/2025",
-      destination: "123 Any Street, London, UK",
-      currentStatus: "In Transit",
-      isTestShipment: true,
-      estimatedDelivery: "6/18/2025",
-      carrier: "MyCargoLane Express",
-      weight: "2.5 kg",
-      value: "$45,000",
-    };
-  };
+  const { data, isLoading: loading } = useQuery({
+    queryKey: ["tracking", id],
+    queryFn: ({ queryKey }) => trackOrder(queryKey[1]),
+  });
+
+  console.log(data);
 
   useEffect(() => {
-    const trackingId = params.get("trackingId") as string
-    setTimeout(() => {
-      const data = fetchTrackingData(trackingId);
-      setTrackingData(data);
-      setLoading(false);
-    }, 800);
-  }, []);
+    setFields(data?.form_fields as FormField[])
+    setTrackingData({
+      trackingId: data?.tracking_id as string,
+      package: getFieldValue("Package_content") as string,
+      status: data?.status as string,
+      shipmentDate: getFieldValue("Invoice_date") as string,
+      destination: getFieldValue("Recipient_address") as string,
+      currentStatus: data?.status as  "processing" | "in_transit" | "delivered",
+      isTestShipment: data?.test as boolean,
+      estimatedDelivery: "Nil",
+      name: getFieldValue("Recipient_name") as string,
+      weight: getFieldValue("Package_weight") as string,
+      email: getFieldValue("Recipient_email") as string,
+    });
+  }, [data, setFields, setTrackingData, getFieldValue]);
 
   const getStatusIcon = (
     status: string,
@@ -60,7 +64,7 @@ export default function TrackingComponent() {
 
     const iconClasses = "w-5 h-5";
 
-    if (status === "Processing") {
+    if (status === "processing") {
       return (
         <div className={baseClasses}>
           <svg
@@ -81,7 +85,7 @@ export default function TrackingComponent() {
           )}
         </div>
       );
-    } else if (status === "In Transit") {
+    } else if (status === "in_transit") {
       return (
         <div className={baseClasses}>
           <svg
@@ -128,16 +132,16 @@ export default function TrackingComponent() {
     toStatus: string,
     currentStatus: string
   ): string => {
-    const statusOrder = ["Processing", "In Transit", "Delivered"];
+    const statusOrder = ["processing", "in_transit", "delivered"];
     const currentIndex = statusOrder.indexOf(currentStatus);
     const toIndex = statusOrder.indexOf(toStatus);
     return currentIndex >= toIndex ? "bg-primary" : "bg-muted";
   };
 
-  const navigate = useNavigate() 
+  const navigate = useNavigate();
 
   const handleGoBack = (): void => {
-    navigate(-1)
+    navigate(-1);
   };
 
   if (loading) {
@@ -195,7 +199,7 @@ export default function TrackingComponent() {
     );
   }
 
-  const statusOrder = ["Processing", "In Transit", "Delivered"];
+  const statusOrder = ["processing", "in_transit", "delivered"];
   const currentIndex = statusOrder.indexOf(trackingData.currentStatus);
 
   return (
@@ -262,7 +266,7 @@ export default function TrackingComponent() {
                 </p>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-green-100 rounded-full"></div>
-                  <p className="font-semibold">{trackingData.status}</p>
+                  <p className="font-semibold">{trackingData.status?.replace("_", " ").toUpperCase()}</p>
                 </div>
               </div>
               <div>
@@ -322,7 +326,7 @@ export default function TrackingComponent() {
               <div className="flex items-center justify-between mb-8">
                 {statusOrder.map((status, index) => (
                   <React.Fragment key={status}>
-                    <div className="flex flex-col items-center">
+                    <div className="flex flex-col items-center self-start">
                       {getStatusIcon(
                         status,
                         currentIndex === index,
@@ -335,7 +339,7 @@ export default function TrackingComponent() {
                             : "text-muted-foreground"
                         }`}
                       >
-                        {status}
+                        {status.replace("_", " ").toUpperCase()}
                       </span>
                       {currentIndex === index && (
                         <span className="text-xs text-primary mt-1 font-medium">
@@ -367,12 +371,21 @@ export default function TrackingComponent() {
                 <div className="space-y-3">
                   <div className="flex justify-between py-2 border-b border-border">
                     <span className="text-muted-foreground text-sm">
-                      Carrier
+                      Name
                     </span>
                     <span className="text-foreground font-medium text-sm">
-                      {trackingData.carrier}
+                      {trackingData.name}
                     </span>
                   </div>
+                  <div className="flex justify-between py-2 border-b border-border">
+                    <span className="text-muted-foreground text-sm">
+                      Email
+                    </span>
+                    <span className="text-foreground font-medium text-sm">
+                      {trackingData.email}
+                    </span>
+                  </div>
+                </div>
                   <div className="flex justify-between py-2 border-b border-border">
                     <span className="text-muted-foreground text-sm">
                       Weight
@@ -381,15 +394,7 @@ export default function TrackingComponent() {
                       {trackingData.weight}
                     </span>
                   </div>
-                  <div className="flex justify-between py-2 border-b border-border">
-                    <span className="text-muted-foreground text-sm">
-                      Declared Value
-                    </span>
-                    <span className="text-foreground font-medium text-sm">
-                      {trackingData.value}
-                    </span>
-                  </div>
-                </div>
+                  
               </div>
 
               <div className="space-y-4">
