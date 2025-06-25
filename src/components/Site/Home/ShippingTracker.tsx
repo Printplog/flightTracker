@@ -4,6 +4,8 @@ import type { FormField } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
+
 
 interface TrackingData {
   trackingId: string;
@@ -25,10 +27,18 @@ export default function TrackingComponent() {
   const id = params.get("trackingId") as string;
   const { setFields, getFieldValue } = useToolStore()
 
-  const { data, isLoading: loading } = useQuery({
+  const { data, isLoading: loading, isError } = useQuery({
     queryKey: ["tracking", id],
     queryFn: ({ queryKey }) => trackOrder(queryKey[1]),
+    retry: 2,
   });
+
+  useEffect(() => {
+    if(isError){
+      toast.error("Invalid Id")
+      navigate("/")
+    }
+  })
 
   console.log(data);
 
