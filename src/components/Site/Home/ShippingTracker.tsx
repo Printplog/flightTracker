@@ -246,14 +246,14 @@ export default function TrackingComponent() {
         <div className="bg-card rounded-2xl shadow-sm border overflow-hidden">
           {/* Header Section */}
           <div className="bg-gradient-to-r from-green-900 to-green-700 text-primary-foreground p-8">
-            <div className="flex items-center justify-between mb-6">
-              <div>
+            <div className="flex gap-5 items-center justify-between mb-6">
+              <div className="">
                 <h1 className="text-2xl font-bold">Shipment Tracking</h1>
                 <p className="text-primary-foreground/80 text-sm">
                   Real-time package monitoring
                 </p>
               </div>
-              <div className="bg-primary-foreground/10 backdrop-blur-sm rounded-lg px-4 py-2">
+              <div className="bg-primary-foreground/10 backdrop-blur-sm rounded-lg px-4 py-2 shrink overflow-hidden">
                 <p className="text-xs text-primary-foreground/80">
                   Tracking ID
                 </p>
@@ -321,6 +321,33 @@ export default function TrackingComponent() {
                     </p>
                     <p className="text-red-600 font-semibold text-sm">
                       This is a test shipment for demonstration purposes.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            {trackingData.status === "error_message" && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-8">
+                <div className="flex items-start gap-3">
+                  <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg
+                      className="w-3 h-3 text-white"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-red-500 font-bold text-sm">
+                      Error Message
+                    </p>
+                    <p className="text-red-600 font-semibold text-sm">
+                      {data?.error_message || "An error occurred while tracking the shipment."}
                     </p>
                   </div>
                 </div>
