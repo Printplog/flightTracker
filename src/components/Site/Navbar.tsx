@@ -19,16 +19,8 @@ export default function Navbar() {
       <SectionPadding className="flex justify-between items-center py-4 lg:py-10">
         {/* Logo */}
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-            <svg
-              viewBox="0 0 24 24"
-              className="w-5 h-5 text-primary-foreground"
-              fill="currentColor"
-            >
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-            </svg>
-          </div>
-          <span className="font-bold text-xl text-foreground">DLogis</span>
+          <img src="/logo.png" alt="" className='size-[30px]' />
+          <span className="font-bold text-xl text-foreground">PercelFinda</span>
         </div>
 
         {/* Desktop Navigation */}
