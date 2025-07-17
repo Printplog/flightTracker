@@ -347,7 +347,7 @@ export default function TrackingComponent() {
                       Error Message
                     </p>
                     <p className="text-red-600 font-semibold text-sm">
-                      {data?.error_message || "An error occurred while tracking the shipment."}
+                      {data?.error_message}
                     </p>
                   </div>
                 </div>
