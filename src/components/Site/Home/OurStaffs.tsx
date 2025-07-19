@@ -16,42 +16,42 @@ export default function TeamSection(): React.JSX.Element {
       name: "DAVID ANDERSON",
       position: "CO-FOUNDER",
       description: "David, a co-founder at MyCargoLane, leads with a commitment to innovation and customer satisfaction. His strategic vision ensures that MyCargoLane provides top-notch shipping solutions.",
-      image: "/api/placeholder/200/200"
+      image: "/f2.jpg"
     },
     {
       id: 2,
       name: "SOPHIE WALKER",
       position: "CO-FOUNDER",
       description: "Sophie, a co-founder of MyCargoLane, is dedicated to ensuring the smooth operation of our shipping services. Her attention to detail and customer-centric approach drive the success of MyCargoLane.",
-      image: "/api/placeholder/200/200"
+      image: "/f1.jpg"
     },
     {
       id: 3,
       name: "RYAN CARTER",
       position: "CO-FOUNDER",
       description: "Ryan, a co-founder at MyCargoLane, brings expertise and passion to the world of logistics. His dedication to efficiency and customer satisfaction sets the standard for our shipping services.",
-      image: "/api/placeholder/200/200"
+      image: "/f3.jpg"
     },
     {
       id: 4,
       name: "EMMA RODRIGUEZ",
       position: "OPERATIONS MANAGER",
       description: "Emma oversees daily operations at MyCargoLane, ensuring seamless coordination between departments. Her exceptional organizational skills and problem-solving abilities keep our logistics running smoothly.",
-      image: "/api/placeholder/200/200"
+      image: "/f6.jpg"
     },
     {
       id: 5,
       name: "MICHAEL CHEN",
       position: "HEAD OF CUSTOMER SERVICE",
       description: "Michael leads our customer service team with dedication and empathy. His commitment to resolving client concerns quickly and effectively has earned MyCargoLane an outstanding customer satisfaction record.",
-      image: "/api/placeholder/200/200"
+      image: "/f5.jpg"
     },
     {
       id: 6,
       name: "SARAH THOMPSON",
       position: "LOGISTICS COORDINATOR",
       description: "Sarah manages the complex web of shipping routes and delivery schedules. Her analytical approach and attention to detail ensure that every package reaches its destination on time and in perfect condition.",
-      image: "/api/placeholder/200/200"
+      image: "/f4.jpg"
     }
   ];
 
@@ -76,10 +76,8 @@ export default function TeamSection(): React.JSX.Element {
               className="bg-white rounded-lg border border-gray-100 p-8 text-center hover:shadow-lg transition-shadow duration-300"
             >
               {/* Profile Image */}
-              <div className="mb-6">
-                <div className="w-24 h-24 text-[30px] flex justify-center items-center mx-auto rounded-full overflow-hidden bg-gray-200">
-                  {member.name[0]}
-                </div>
+              <div className="mb-6 flex justify-center">
+                <img src={member.image} alt="" className="size-24 rounded-full border" />
               </div>
 
               {/* Name */}
