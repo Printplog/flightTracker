@@ -6,7 +6,7 @@ export default function Footer() {
   const handleSubscribe = (): void => {
     if (email) {
       console.log('Subscribed with email:', email);
-      alert('Thank you for subscribing!');
+      alert('Thank you for subscribing to MySkyRoute updates!');
       setEmail('');
     } else {
       alert('Please enter your email address');
@@ -18,66 +18,65 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-gray-800 text-white py-16 px-4">
+    <footer className="bg-foreground/90 text-white py-16 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          {/* About Us Section */}
+          {/* About MySkyRoute */}
           <div>
             <h3 className="text-lg font-bold mb-6 text-primary">
-              ABOUT US
+              ABOUT MYSKYROUTE
             </h3>
-            <p className="text-gray-300 leading-relaxed text-sm">
-              Welcome to MyCargoLane, your trusted partner in global shipping and logistics. 
-              Our mission is to provide efficient and reliable cargo delivery services tailored 
-              to your unique needs. With a commitment to excellence, we ensure that your 
-              shipments reach their destination securely and on time.
+            <p className="text-gray-200 leading-relaxed text-sm">
+              MySkyRoute is your trusted partner for seamless flight bookings and real-time tracking. 
+              We connect you to the best flight deals, global destinations, and a hassle-free travel experience. 
+              Our mission is to make your journey smooth, affordable, and memorable—every time you fly.
             </p>
           </div>
 
-          {/* Features Section */}
+          {/* Quick Links */}
           <div>
             <h3 className="text-lg font-bold mb-6 text-primary">
-              FEATURES
+              QUICK LINKS
             </h3>
             <ul className="space-y-3">
               <li>
                 <a 
-                  href="#" 
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
+                  href="#why-choose-us" 
+                  className="text-gray-200 hover:text-white transition-colors text-sm"
                 >
-                  About Us
+                  Why Choose Us
                 </a>
               </li>
               <li>
                 <a 
-                  href="#" 
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
+                  href="#testimonials" 
+                  className="text-gray-200 hover:text-white transition-colors text-sm"
                 >
                   Testimonials
                 </a>
               </li>
               <li>
                 <a 
-                  href="#" 
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
+                  href="#faqs" 
+                  className="text-gray-200 hover:text-white transition-colors text-sm"
+                >
+                  FAQs
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="#terms" 
+                  className="text-gray-200 hover:text-white transition-colors text-sm"
                 >
                   Terms of Service
                 </a>
               </li>
               <li>
                 <a 
-                  href="#" 
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
+                  href="#contact" 
+                  className="text-gray-200 hover:text-white transition-colors text-sm"
                 >
-                  Privacy
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#" 
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  Contact Us
+                  Contact Support
                 </a>
               </li>
             </ul>
@@ -86,26 +85,38 @@ export default function Footer() {
           {/* Newsletter Section */}
           <div>
             <h3 className="text-lg font-bold mb-6 text-primary">
-              SUBSCRIBE TO NEWSLETTER
+              STAY UPDATED
             </h3>
-            <div className="flex">
+            <p className="text-gray-200 text-sm mb-4">
+              Get the latest flight deals, travel tips, and exclusive offers straight to your inbox.
+            </p>
+            <form
+              className="flex flex-col sm:flex-row gap-2 w-full"
+              onSubmit={e => {
+                e.preventDefault();
+                handleSubscribe();
+              }}
+            >
               <input
                 type="email"
                 value={email}
                 onChange={handleEmailChange}
-                placeholder="Enter Email"
-                className="flex-1 px-4 py-3 text-gray-900 bg-white rounded-l-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                placeholder="Your email address"
+                className="flex-1 px-4 py-3 text-gray-900 bg-white rounded-md sm:rounded-l-md sm:rounded-r-none focus:outline-none focus:ring-2 focus:ring-primary w-full"
               />
               <button
-                onClick={handleSubscribe}
-                className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-r-md transition-colors font-medium"
+                type="submit"
+                className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-md sm:rounded-l-none sm:rounded-r-md transition-colors font-medium w-full sm:w-auto"
               >
                 Subscribe
               </button>
+            </form>
             </div>
           </div>
         </div>
-      </div>
+        <div className="mt-12 border-t border-white/10 pt-8 text-center text-xs text-gray-300">
+          &copy; {new Date().getFullYear()} MySkyRoute. All rights reserved.
+        </div>
     </footer>
   );
 }

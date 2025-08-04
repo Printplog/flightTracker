@@ -1,128 +1,162 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { Mail, MapPin, Send } from "lucide-react";
 
-interface FormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  message: string;
-}
-
-export default function ContactForm() {
-  const [formData, setFormData] = useState<FormData>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    message: ''
+export default function ContactPage() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
   });
+  const [submitted, setSubmitted] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  const handleSubmit = (): void => {
-    console.log('Form submitted:', formData);
-    alert('Message sent successfully!');
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
     setFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      message: ''
+      name: "",
+      email: "",
+      subject: "",
+      message: "",
     });
+    setTimeout(() => setSubmitted(false), 3500);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
+    <section className="relative min-h-screen bg-gradient-to-br from-primary/5 via-background to-background py-20 px-4">
+      <div className="relative z-10 max-w-5xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
-          <p className="text-sm text-gray-500 uppercase tracking-wide mb-2">
-            GET IN TOUCH
-          </p>
-          <h1 className="text-4xl font-bold text-primary">
-            CONTACT US
+        <div className="text-center mb-14">
+          <span className="inline-block bg-primary/10 text-primary font-semibold px-4 py-1 rounded-full uppercase tracking-widest text-xs mb-4">
+            Contact
+          </span>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-foreground mb-4 tracking-tight">
+            Get in Touch
           </h1>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            Have a question, feedback, or partnership inquiry? Our team is here to help you 24/7.
+          </p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-3">
-            {/* Contact Form */}
-            <div className="lg:col-span-2 p-8">
-              <div className="space-y-6">
-                {/* Name Fields */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white/90 rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
+          {/* Contact Info */}
+          <div className="md:w-1/2 bg-gradient-to-br from-primary/5 to-primary/10 p-10 flex flex-col justify-between min-w-0">
+            <div>
+              <h2 className="text-2xl font-bold text-primary mb-6">Contact Information</h2>
+              <ul className="space-y-6">
+                <li className="flex items-center gap-4">
+                  <Mail className="w-6 h-6 text-primary" />
+                  <a
+                    href="mailto:info@mycargolane.com"
+                    className="text-base text-foreground hover:text-primary transition break-all"
+                  >
+                    info@mycargolane.com
+                  </a>
+                </li>
+                <li className="flex items-center gap-4">
+                  <MapPin className="w-6 h-6 text-primary" />
+                  <span className="text-base text-foreground break-words">
+                    123 Skyway Ave, Suite 400, New York, NY 10001
+                  </span>
+                </li>
+              </ul>
+            </div>
+            <div className="mt-10">
+              <h3 className="text-lg font-semibold text-primary mb-2">Support Hours</h3>
+              <p className="text-muted-foreground text-base">24/7, including holidays</p>
+            </div>
+          </div>
+
+          {/* Contact Form */}
+          <div className="md:w-1/2 p-4 sm:p-10 bg-white min-w-0">
+            <form className="space-y-6" onSubmit={handleSubmit} autoComplete="off">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-muted-foreground mb-1">
+                    Name
+                  </label>
                   <input
                     type="text"
-                    name="firstName"
-                    value={formData.firstName}
+                    name="name"
+                    value={formData.name}
                     onChange={handleInputChange}
-                    placeholder="First name"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                  />
-                  <input
-                    type="text"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleInputChange}
-                    placeholder="Last name"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    placeholder="Your name"
+                    required
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-background"
                   />
                 </div>
-
-                {/* Email Field */}
+                <div>
+                  <label className="block text-sm font-medium text-muted-foreground mb-1">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder="you@email.com"
+                    required
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-background"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">
+                  Subject
+                </label>
                 <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
+                  type="text"
+                  name="subject"
+                  value={formData.subject}
                   onChange={handleInputChange}
-                  placeholder="Email address"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  placeholder="Subject"
+                  required
+                  className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-background"
                 />
-
-                {/* Message Field */}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">
+                  Message
+                </label>
                 <textarea
                   name="message"
                   value={formData.message}
                   onChange={handleInputChange}
                   placeholder="Write your message..."
                   rows={6}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-vertical"
+                  required
+                  className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-background resize-vertical"
                 />
-
-                {/* Submit Button */}
-                <button
-                  onClick={handleSubmit}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3 px-8 rounded-md transition-colors"
-                >
-                  Send Message
-                </button>
               </div>
-            </div>
-
-            {/* Contact Info Sidebar */}
-            <div className="bg-gray-100 p-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">
-                CONTACT INFO
-              </h2>
-              
               <div>
-                <p className="text-sm font-medium text-gray-700 mb-1">
-                  Email:
-                </p>
-                <a 
-                  href="mailto:info@mycargolane.com"
-                  className="text-primary hover:text-primary/80 transition-colors"
+                <button
+                  type="submit"
+                  className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 px-8 rounded-lg transition-colors shadow"
+                  disabled={submitted}
                 >
-                  info@mycargolane.com
-                </a>
+                  <Send className="w-5 h-5" />
+                  {submitted ? "Message Sent!" : "Send Message"}
+                </button>
+                {submitted && (
+                  <p className="text-green-600 mt-3 text-sm font-medium">
+                    Thank you! Your message has been sent.
+                  </p>
+                )}
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

@@ -1,169 +1,91 @@
-import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Package, CreditCard, Clock, Headphones, Globe, RefreshCw } from 'lucide-react';
-import SectionPadding from '../../../layouts/SectionPadding';
+import React from "react";
+import { MessageSquare, CreditCard, Users, CalendarCheck, FileText, Tag, Settings, HelpCircle } from "lucide-react";
+import SectionPadding from "../../../layouts/SectionPadding";
 
-interface FAQItem {
-  id: number;
-  question: string;
-  answer: string;
-  icon: React.ReactNode;
-  category: 'payment' | 'shipping' | 'support' | 'policy';
-}
+const faqs = [
+  {
+    question: "Can I book flights with multiple airlines?",
+    answer:
+      "Yes, you can seamlessly book flights with multiple airlines through our platform to ensure you get the best possible routes and prices for your trip.",
+  },
+  {
+    question: "How do I change my booking?",
+    answer:
+      "You can change your booking details directly through our website by accessing the 'Manage Booking' section or by contacting our customer support for assistance.",
+  },
+  {
+    question: "What is your cancellation policy?",
+    answer:
+      "Our cancellation policy varies by airline. Typically, you can cancel up to 24 hours after booking for a full refund depending on the fare conditions. Please check the specific terms while booking.",
+  },
+  {
+    question: "What forms of payment do you accept?",
+    answer:
+      "We accept various forms of payment including credit cards, debit cards, PayPal, and several other payment gateways. Specific options available may vary depending on the country of booking.",
+  },
+  {
+    question: "How can I check the status of my flight?",
+    answer:
+      "You can check the status of your flight by logging into your account on our website and navigating to the 'My Trips' section, or by entering your booking reference on our flight status page.",
+  },
+  {
+    question: "How can I get a receipt for my booking?",
+    answer:
+      "You can download the receipt for your booking from the 'My Bookings' section of your account after your ticket has been issued.",
+  },
+  {
+    question: "Do you offer group booking discounts?",
+    answer:
+      "Yes, we offer special rates for group bookings. If you are traveling with a group of 10 or more, please contact our customer support to avail of customized discounts.",
+  },
+  {
+    question: "What should I do if I have special travel needs?",
+    answer:
+      "If you have any special travel needs (such as wheelchair assistance, dietary restrictions, etc.), please inform us at the time of booking so we can make the necessary arrangements with the airline.",
+  },
+];
+
+const icons = [
+  <MessageSquare className="w-6 h-6 text-primary" />,
+  <Settings className="w-6 h-6 text-primary" />,
+  <FileText className="w-6 h-6 text-primary" />,
+  <CreditCard className="w-6 h-6 text-primary" />,
+  <CalendarCheck className="w-6 h-6 text-primary" />,
+  <Tag className="w-6 h-6 text-primary" />,
+  <Users className="w-6 h-6 text-primary" />,
+  <HelpCircle className="w-6 h-6 text-primary" />,
+];
 
 export default function FAQSection(): React.JSX.Element {
-  const [openItem, setOpenItem] = useState<number | null>(1);
-
-  const faqItems: FAQItem[] = [
-    {
-      id: 1,
-      question: "CAN I ACCEPT BOTH PAYPAL AND STRIPE?",
-      answer: "Yes, MyCargoLane supports both PayPal and Stripe as payment options. You can choose the one that best suits your preferences and needs.",
-      icon: <CreditCard className="w-5 h-5" />,
-      category: 'payment'
-    },
-    {
-      id: 2,
-      question: "HOW CAN I CUSTOMIZE MY SHIPPING PREFERENCES?",
-      answer: "You can easily customize your shipping preferences in your account settings. Navigate to the 'Preferences' section, where you can specify delivery options, packaging requirements, and more according to your needs.",
-      icon: <Package className="w-5 h-5" />,
-      category: 'shipping'
-    },
-    {
-      id: 3,
-      question: "WHAT IS THE AVAILABLE REFUND PERIOD?",
-      answer: "We offer a 30-day refund period from the date of your purchase. If you are unsatisfied with our services, you can request a refund within this timeframe.",
-      icon: <RefreshCw className="w-5 h-5" />,
-      category: 'policy'
-    },
-    {
-      id: 4,
-      question: "WHAT IS YOUR OPENING TIME?",
-      answer: "Our offices are open from Monday to Friday, 9:00 AM to 6:00 PM. Feel free to reach out during these hours for any assistance or inquiries you may have.",
-      icon: <Clock className="w-5 h-5" />,
-      category: 'support'
-    },
-    {
-      id: 5,
-      question: "HOW CAN I TRACK MY SHIPMENTS?",
-      answer: "Tracking your shipments is easy! Simply log in to your MyCargoLane account and go to the 'Track Shipment' section. Enter your tracking number, and you'll get real-time updates on your cargo's location and status.",
-      icon: <Package className="w-5 h-5" />,
-      category: 'shipping'
-    },
-    {
-      id: 6,
-      question: "DO YOU PROVIDE INTERNATIONAL SHIPPING SERVICES?",
-      answer: "Absolutely! MyCargoLane specializes in international shipping services. Whether it's across borders or continents, we ensure your cargo reaches its destination securely and on time.",
-      icon: <Globe className="w-5 h-5" />,
-      category: 'shipping'
-    },
-    {
-      id: 7,
-      question: "WHAT IS YOUR CUSTOMER SUPPORT AVAILABILITY?",
-      answer: "Our customer support team is available 24/7 to assist you. You can reach out to us through our contact form, email, or phone, and we'll promptly address your inquiries and concerns.",
-      icon: <Headphones className="w-5 h-5" />,
-      category: 'support'
-    },
-    {
-      id: 8,
-      question: "WHAT AVAILABLE IS REFUND PERIOD?",
-      answer: "We offer a 30-day refund period from the date of your purchase. If you are unsatisfied with our services, you can request a refund within this timeframe.",
-      icon: <RefreshCw className="w-5 h-5" />,
-      category: 'policy'
-    }
-  ];
-
-  const toggleItem = (id: number): void => {
-    setOpenItem(openItem === id ? null : id);
-  };
-
-  const getCategoryColor = (category: string): string => {
-    const colors = {
-      payment: 'bg-blue-50 border-blue-200',
-      shipping: 'bg-green-50 border-green-200',
-      support: 'bg-purple-50 border-purple-200',
-      policy: 'bg-orange-50 border-orange-200'
-    };
-    return colors[category as keyof typeof colors] || 'bg-gray-50 border-gray-200';
-  };
-
-  const getIconColor = (category: string): string => {
-    const colors = {
-      payment: 'text-blue-600',
-      shipping: 'text-green-600',
-      support: 'text-purple-600',
-      policy: 'text-orange-600'
-    };
-    return colors[category as keyof typeof colors] || 'text-gray-600';
-  };
-
   return (
     <SectionPadding className="bg-white py-20 px-4 border-b">
-      <div className="">
+      <div>
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-primary mb-6 tracking-wide">
-            FREQUENTLY ASK QUESTIONS
+          <h2 className="text-2xl md:text-3xl font-bold text-primary mb-6 tracking-wide">
+            Frequently Asked Questions
           </h2>
           <div className="w-24 h-1 bg-primary mx-auto mb-6"></div>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Find answers to common questions about our shipping services, policies, and support.
+          <p className="text-gray-600 text-sm max-w-2xl mx-auto">
+            Find answers to common questions about our booking, payment, and support.
           </p>
         </div>
 
         {/* FAQ Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {faqItems.map((item) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {faqs.map((faq, idx) => (
             <div
-              key={item.id}
-              className={`rounded-xl h-fit border-2 transition-all duration-300 hover:shadow-lg ${
-                openItem === item.id 
-                  ? `${getCategoryColor(item.category)} shadow-md` 
-                  : 'bg-white border-gray-100 hover:border-gray-200'
-              }`}
+              key={faq.question}
+              className="flex items-start gap-4 bg-muted/40 rounded-xl p-6 border border-gray-100 hover:shadow-md transition"
             >
-              {/* Question Header */}
-              <button
-                onClick={() => toggleItem(item.id)}
-                className="w-full p-6 text-left focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 rounded-xl"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className={`p-2 rounded-lg ${getCategoryColor(item.category)}`}>
-                      <div className={getIconColor(item.category)}>
-                        {item.icon}
-                      </div>
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-bold text-gray-900 leading-tight pr-4">
-                        {item.question}
-                      </h3>
-                    </div>
-                  </div>
-                  <div className={`p-1 rounded-full transition-transform duration-200 ${
-                    openItem === item.id ? 'rotate-180' : ''
-                  }`}>
-                    {openItem === item.id ? (
-                      <ChevronUp className="w-5 h-5 text-primary" />
-                    ) : (
-                      <ChevronDown className="w-5 h-5 text-gray-400" />
-                    )}
-                  </div>
+              <div className="flex-shrink-0">
+                <div className="bg-primary/10 rounded-lg p-2 flex items-center justify-center">
+                  {icons[idx]}
                 </div>
-              </button>
-
-              {/* Answer Content */}
-              <div
-                className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                  openItem === item.id ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                }`}
-              >
-                <div className="px-6 pb-6">
-                  <div className="ml-16">
-                    <p className="text-gray-600 leading-relaxed">
-                      {item.answer}
-                    </p>
-                  </div>
-                </div>
+              </div>
+              <div>
+                <h3 className="text-[16px] font-semibold text-foreground mb-2">{faq.question}</h3>
+                <p className="text-muted-foreground text-[14px]">{faq.answer}</p>
               </div>
             </div>
           ))}

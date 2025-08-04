@@ -1,26 +1,37 @@
 import { useState } from 'react';
 import SectionPadding from '../../layouts/SectionPadding';
 
+const navLinks = [
+  { href: '#hero', label: 'Home' },
+  { href: '#features', label: 'Features' },
+  { href: '#services', label: 'Services' },
+  { href: '#pricing', label: 'Pricing' },
+  { href: '#faq', label: 'FAQ' },
+  { href: '#why-us', label: 'Why Us' },
+  { href: '#contact', label: 'Contact' },
+];
+
+function handleSmoothScroll(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, href: string, closeMenu?: () => void) {
+  if (href.startsWith('#')) {
+    e.preventDefault();
+    const el = document.getElementById(href.substring(1));
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+      if (closeMenu) closeMenu();
+    }
+  }
+}
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
-  const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/services", label: "Services" },
-    { href: "/about", label: "About Us" },
-    { href: "/why-us", label: "Why Us" },
-    { href: "/testimonials", label: "Testimonials" },
-    { href: "/contact", label: "Contact" },
-  ];
 
   return (
-    <nav className="border-b relative bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-[999]">
-      <SectionPadding className="flex justify-between items-center py-4 lg:py-10">
+    <nav className="border-b relative backdrop-blur supports-[backdrop-filter]:bg-background/60 z-[999]">
+      <SectionPadding className="flex justify-between items-center py-4 lg:py-6">
         {/* Logo */}
         <div className="flex items-center gap-2">
-          <img src="/logo.png" alt="" className='size-[30px]' />
-          <span className="font-bold text-xl text-foreground">PercelFinda</span>  
+          {/* <img src="/logo.png" alt="" className='size-[30px]' /> */}
+          <span className="font-bold text-xl text-foreground">MySkyRoute</span>  
         </div>
 
         {/* Desktop Navigation */}
@@ -29,11 +40,8 @@ export default function Navbar() {
             <a
               key={link.href}
               href={link.href}
-              className={`transition-colors font-medium ${
-                index === 0
-                  ? "text-primary"
-                  : "text-foreground hover:text-primary"
-              }`}
+              onClick={e => handleSmoothScroll(e, link.href)}
+              className={`transition-colors text-xs font-medium ${index === 0 ? 'text-primary' : 'text-foreground hover:text-primary'}`}
             >
               {link.label}
             </a>
@@ -79,12 +87,8 @@ export default function Navbar() {
                   <a
                     key={link.href}
                     href={link.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    className={`transition-colors font-medium py-2 ${
-                      index === 0
-                        ? "text-primary"
-                        : "text-foreground hover:text-primary"
-                    }`}
+                    onClick={e => handleSmoothScroll(e, link.href, () => setIsMenuOpen(false))}
+                    className={`transition-colors font-medium py-2 ${index === 0 ? 'text-primary' : 'text-foreground hover:text-primary'}`}
                   >
                     {link.label}
                   </a>

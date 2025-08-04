@@ -2,81 +2,80 @@ import SectionPadding from "../../../layouts/SectionPadding";
 
 export default function AboutSection() {
   return (
-    <SectionPadding className="py-16 bg-background">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Content */}
-          <div className="space-y-6">
-            <h2 className="text-3xl lg:text-4xl font-bold text-primary mb-6">
-              ABOUT US
-            </h2>
-            
-            <div className="space-y-4 text-muted-foreground text-lg leading-relaxed">
-              <p>
-                At MKLogis, we embark on a journey of excellence in shipping and logistics. 
-                Nestled far from ordinary, our commitment thrives in delivering unparalleled services.
-              </p>
-              
-              <p>
-                With years of industry expertise and a global network of trusted partners, 
-                we transform complex logistics challenges into streamlined solutions that 
-                drive your business forward.
-              </p>
-            </div>
+    <SectionPadding className="py-20 bg-background">
+      <div className="max-w-5xl mx-auto flex flex-col items-center">
+        {/* Top Badge */}
+        <div className="flex items-center gap-3 mb-6">
+          <span className="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          <span className="uppercase tracking-widest text-xs font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full">
+            About Us
+          </span>
+        </div>
 
-            {/* Stats or Features */}
-            <div className="grid grid-cols-2 gap-6 pt-8">
-              <div className="text-center lg:text-left">
-                <div className="text-3xl font-bold text-primary mb-2">11+</div>
-                <div className="text-sm text-muted-foreground">Years Experience</div>
-              </div>
-              <div className="text-center lg:text-left">
-                <div className="text-3xl font-bold text-primary mb-2">24/7</div>
-                <div className="text-sm text-muted-foreground">Customer Support</div>
-              </div>
-            </div>
-
-            {/* CTA Button */}
-            <div className="pt-6">
-              <button className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-3 rounded-lg font-semibold transition-colors">
-                Learn More About Us
-              </button>
+        {/* Main Card */}
+        <div className="w-full bg-card rounded-3xl shadow-xl flex flex-col md:flex-row overflow-hidden">
+          {/* Left: Image with overlay and badge */}
+          <div className="relative md:w-1/2 min-h-[320px]">
+            <img
+              src="/plane.jpg"
+              alt="PercelFinda operations"
+              className="object-cover w-full h-full min-h-[320px] md:min-h-[400px]"
+            />
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-transparent" />
+            {/* Floating stat */}
+            <div className="absolute bottom-6 left-6 bg-background/90 px-5 py-3 rounded-xl shadow-lg flex flex-col items-center">
+              <span className="text-2xl font-bold text-primary">2M+</span>
+              <span className="text-xs text-muted-foreground">Flights Booked</span>
             </div>
           </div>
 
-          {/* Image */}
-          <div className="relative order-first lg:order-last">
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-              <img 
-                src="/sea.jpg" 
-                alt="MKLogis team and operations" 
-                className="w-full h-[400px] lg:h-[500px] object-cover"
-              />
-              
-              {/* Overlay with decorative elements */}
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
-              
-              {/* Floating badge */}
-              <div className="absolute top-6 left-6 bg-card/90 backdrop-blur-sm rounded-lg px-4 py-2 shadow-lg">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-                  <span className="text-sm font-medium text-foreground">Trusted Worldwide</span>
-                </div>
+          {/* Right: Content */}
+          <div className="md:w-1/2 flex flex-col justify-center px-8 py-10 space-y-6">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-foreground mb-2">
+              Making Air Travel Simple, Affordable, and Transparent
+            </h2>
+            <p className="text-muted-foreground text-base leading-relaxed">
+              PercelFinda is your trusted partner for booking and tracking flights worldwide. Our mission is to empower travelers with seamless booking, real-time flight tracking, and unbeatable deals—so you can travel smarter, every time.
+            </p>
+            <ul className="space-y-2 text-muted-foreground text-base pl-4 list-disc">
+              <li>
+                <span className="font-semibold text-primary">Global Coverage:</span> Search and book flights to 1,000+ destinations.
+              </li>
+              <li>
+                <span className="font-semibold text-primary">Expert Support:</span> Friendly travel experts available around the clock.
+              </li>
+              <li>
+                <span className="font-semibold text-primary">Smart Technology:</span> Real-time flight tracking and instant notifications.
+              </li>
+            </ul>
+            {/* Stats Row */}
+            <div className="flex gap-8 pt-4">
+              <div className="flex flex-col items-center">
+                <span className="text-xl font-bold text-primary">10+</span>
+                <span className="text-xs text-muted-foreground">Years Experience</span>
               </div>
-              
-              {/* Bottom stats card */}
-              <div className="absolute bottom-6 right-6 bg-card/90 backdrop-blur-sm rounded-lg p-4 shadow-lg">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">500K+</div>
-                  <div className="text-xs text-muted-foreground">Shipments Delivered</div>
-                </div>
+              <div className="flex flex-col items-center">
+                <span className="text-xl font-bold text-primary">24/7</span>
+                <span className="text-xs text-muted-foreground">Customer Support</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <span className="text-xl font-bold text-primary">99.9%</span>
+                <span className="text-xs text-muted-foreground">On-Time Updates</span>
               </div>
             </div>
-
-            {/* Decorative elements */}
-            <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary/10 rounded-full blur-xl" />
-            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-secondary/10 rounded-full blur-xl" />
+            {/* CTA */}
+            <div className="pt-4">
+              <a
+                href="/about"
+                className="inline-block bg-primary text-primary-foreground hover:bg-primary/90 px-7 py-3 rounded-lg font-semibold transition-colors shadow"
+              >
+                Discover Our Story
+              </a>
+            </div>
           </div>
         </div>
+      </div>
     </SectionPadding>
   );
 }

@@ -3,12 +3,12 @@ import AboutSection from "../../components/Site/Home/About";
 import ContactForm from "../../components/Site/Home/Contact";
 import FAQSection from "../../components/Site/Home/FAQ";
 import Hero from "../../components/Site/Home/Hero";
-import TeamSection from "../../components/Site/Home/OurStaffs";
 import PricingSection from "../../components/Site/Home/Pricing";
 import Services from "../../components/Site/Home/Services";
-import StatsSection from "../../components/Site/Home/Stats";
 import WhyChooseUsSection from "../../components/Site/Home/WhyChooseUs";
 import TrackingComponent from "../../components/Site/Home/ShippingTracker";
+import FeaturesSection from "../../components/Site/Home/Features";
+import PopularFlights from "@/components/Site/Home/PopularFlights";
 
 export default function Home() {
   const [params] = useSearchParams();
@@ -18,15 +18,17 @@ export default function Home() {
     <div className="">
       {!id && (
         <>
-          <Hero />
-          <Services />
-          <AboutSection />
-          <StatsSection />
-          <TeamSection />
-          <PricingSection />
-          <FAQSection />
-          <WhyChooseUsSection />
-          <ContactForm />
+          <section id="hero"><Hero /></section>
+          <section id="features"><FeaturesSection /></section>
+          <section id="popular-flights"><PopularFlights /></section>
+          <section id="services"><Services /></section>
+          <section id="about"><AboutSection /></section>
+          {/* <StatsSection /> */}
+          {/* <TeamSection /> */}
+          <section id="pricing"><PricingSection /></section>
+          <section id="faq"><FAQSection /></section>
+          <section id="why-us"><WhyChooseUsSection /></section>
+          <section id="contact"><ContactForm /></section>
         </>
       )}
       {id && <TrackingComponent />}
