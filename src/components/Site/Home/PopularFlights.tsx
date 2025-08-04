@@ -6,6 +6,7 @@ interface Flight {
   img: string;
 }
 
+
 const flights: Flight[] = [
   {
     from: "London",
