@@ -31,7 +31,7 @@ export default function Navbar() {
         {/* Logo */}
         <div className="flex items-center gap-2">
           {/* <img src="/logo.png" alt="" className='size-[30px]' /> */}
-          <span className="font-bold text-xl text-foreground">MySkyRoute</span>  
+          <span className="font-bold text-xl text-foreground">MyFlightLookup</span>  
         </div>
 
         {/* Desktop Navigation */}

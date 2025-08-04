@@ -1,5 +1,4 @@
 import SectionPadding from "@/layouts/SectionPadding";
-import React from "react";
 
 interface Flight {
   from: string;
