@@ -1,19 +1,112 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import SectionPadding from '../../../layouts/SectionPadding';
 import { useNavigate } from 'react-router-dom';
+import { Plane } from 'lucide-react';
+
+// Infinite typewriter hook for multiple lines
+function useInfiniteTypewriter(lines: string[], speed = 45, pause = 1200) {
+  const [displayed, setDisplayed] = useState<string[]>(lines.map(() => ''));
+  const [lineIdx, setLineIdx] = useState(0);
+  const [charIdx, setCharIdx] = useState(0);
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    if (lineIdx < lines.length) {
+      if (charIdx < lines[lineIdx].length) {
+        timeout = setTimeout(() => {
+          setDisplayed((prev) => {
+            const copy = [...prev];
+            copy[lineIdx] += lines[lineIdx][charIdx];
+            return copy;
+          });
+          setCharIdx((i) => i + 1);
+        }, speed);
+      } else {
+        // Pause before next line
+        timeout = setTimeout(() => {
+          setLineIdx((i) => i + 1);
+          setCharIdx(0);
+        }, 400);
+      }
+    } else {
+      // Pause before restarting
+      timeout = setTimeout(() => {
+        setDisplayed(lines.map(() => ''));
+        setLineIdx(0);
+        setCharIdx(0);
+      }, pause);
+    }
+    return () => clearTimeout(timeout);
+  }, [lines, lineIdx, charIdx, speed, pause]);
+
+  return displayed;
+}
+
+// Plane that moves randomly around the hero section
+function RandomMovingPlane() {
+  const [pos, setPos] = useState({ top: 30, left: 60, rotate: 0 });
+  const requestRef = useRef<number | null>(null);
+
+  function getRandomPosition() {
+    const top = Math.random() * 70 + 5; // 5% to 75%
+    const left = Math.random() * 80 + 5; // 5% to 85%
+    const rotate = Math.random() * 60 - 30; // -30deg to 30deg
+    return { top, left, rotate };
+  }
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    function animate() {
+      setPos(getRandomPosition());
+      timeout = setTimeout(() => {
+        requestRef.current = requestAnimationFrame(animate);
+      }, 2200 + Math.random() * 1200);
+    }
+    requestRef.current = requestAnimationFrame(animate);
+    return () => {
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+      clearTimeout(timeout);
+    };
+  }, []);
+
+  return (
+    <Plane
+      className="w-12 h-12 text-primary drop-shadow-lg transition-all duration-[1800ms] ease-in-out pointer-events-none"
+      style={{
+        position: 'absolute',
+        top: `${pos.top}%`,
+        left: `${pos.left}%`,
+        transform: `translate(-50%, -50%) rotate(${pos.rotate}deg)`,
+        zIndex: 30,
+        filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.10))',
+      }}
+      strokeWidth={2.2}
+    />
+  );
+}
 
 export default function Hero() {
   const [trackingCode, setTrackingCode] = useState('');
   const navigate = useNavigate();
 
+  // Both lines typewritten, infinite
+  const lines = ['TRACK YOUR FLIGHT WITH EASE', 'ANY PLACE ANYWHERE'];
+  const [typedMain, typedSub] = useInfiniteTypewriter(lines, 38, 1200);
+
   return (
-    <SectionPadding className="relative flex flex-col-reverse md:flex-row items-center justify-between py-20 min-h-[450px] md:min-h-[600px]">
+    <SectionPadding className="relative flex flex-col-reverse md:flex-row items-center justify-between py-20 min-h-[450px] md:min-h-[600px] overflow-hidden">
+      {/* Randomly moving plane */}
+      <RandomMovingPlane />
       {/* Left Content */}
       <div className="relative z-10 flex-1 flex items-center w-full md:w-auto mt-8 md:mt-0">
-        <div className="w-full max-w-2xl">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground/80 mb-6 leading-tight text-center md:text-left">
-            EFFORTLESSLY <span className="text-primary">BOOK</span> YOUR FLIGHT AND <span className="text-primary">TRACK</span> WITH EASE
-          </h1>
+        <div className="w-full max-w-3xl">
+          <div className="relative mb-6">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground/80 leading-tight text-center md:text-left min-h-[3.5em]">
+              <span>{typedMain}</span>
+              <br />
+              <span className="text-primary">{typedSub}</span>
+            </h1>
+          </div>
           {/* Tracking Form */}
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-[80%] mx-auto md:mx-0 p-4 sm:p-5 bg-white rounded-lg shadow-md">
             <input
