@@ -18,7 +18,7 @@ export default function AboutSection() {
           <div className="relative md:w-1/2 min-h-[320px]">
             <img
               src="/plane.jpg"
-              alt="PercelFinda operations"
+              alt="MyFlightLookup operations"
               className="object-cover w-full h-full min-h-[320px] md:min-h-[400px]"
             />
             {/* Overlay */}
@@ -36,7 +36,7 @@ export default function AboutSection() {
               Making Air Travel Simple, Affordable, and Transparent
             </h2>
             <p className="text-muted-foreground text-base leading-relaxed">
-              PercelFinda is your trusted partner for booking and tracking flights worldwide. Our mission is to empower travelers with seamless booking, real-time flight tracking, and unbeatable deals—so you can travel smarter, every time.
+              MyFlightLookup is your trusted partner for booking and tracking flights worldwide. Our mission is to empower travelers with seamless booking, real-time flight tracking, and unbeatable deals—so you can travel smarter, every time.
             </p>
             <ul className="space-y-2 text-muted-foreground text-base pl-4 list-disc">
               <li>

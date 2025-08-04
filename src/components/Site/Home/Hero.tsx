@@ -7,7 +7,7 @@ export default function Hero() {
   const navigate = useNavigate();
 
   return (
-    <SectionPadding className="relative flex flex-col-reverse md:flex-row items-center justify-between py-10 md:py-20 min-h-[450px] md:min-h-[600px]">
+    <SectionPadding className="relative flex flex-col-reverse md:flex-row items-center justify-between py-20 min-h-[450px] md:min-h-[600px]">
       {/* Left Content */}
       <div className="relative z-10 flex-1 flex items-center w-full md:w-auto mt-8 md:mt-0">
         <div className="w-full max-w-2xl">
