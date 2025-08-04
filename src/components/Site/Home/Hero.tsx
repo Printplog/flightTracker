@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import SectionPadding from '../../../layouts/SectionPadding';
 import { useNavigate } from 'react-router-dom';
 import { Plane } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 // Infinite typewriter hook for multiple lines
 function useInfiniteTypewriter(lines: string[], speed = 45, pause = 1200) {
@@ -42,10 +43,9 @@ function useInfiniteTypewriter(lines: string[], speed = 45, pause = 1200) {
   return displayed;
 }
 
-// Plane that moves randomly around the hero section
+// Plane that moves randomly around the hero section using framer-motion
 function RandomMovingPlane() {
   const [pos, setPos] = useState({ top: 30, left: 60, rotate: 0 });
-  const requestRef = useRef<number | null>(null);
 
   function getRandomPosition() {
     const top = Math.random() * 70 + 5; // 5% to 75%
@@ -55,33 +55,38 @@ function RandomMovingPlane() {
   }
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    function animate() {
+    const interval = setInterval(() => {
       setPos(getRandomPosition());
-      timeout = setTimeout(() => {
-        requestRef.current = requestAnimationFrame(animate);
-      }, 2200 + Math.random() * 1200);
-    }
-    requestRef.current = requestAnimationFrame(animate);
-    return () => {
-      if (requestRef.current) cancelAnimationFrame(requestRef.current);
-      clearTimeout(timeout);
-    };
+    }, 2200 + Math.random() * 1200);
+    return () => clearInterval(interval);
   }, []);
 
   return (
-    <Plane
-      className="w-12 h-12 text-primary drop-shadow-lg transition-all duration-[1800ms] ease-in-out pointer-events-none"
-      style={{
-        position: 'absolute',
+    <motion.div
+      animate={{
         top: `${pos.top}%`,
         left: `${pos.left}%`,
-        transform: `translate(-50%, -50%) rotate(${pos.rotate}deg)`,
+        rotate: pos.rotate,
+      }}
+      transition={{
+        type: 'spring',
+        stiffness: 60,
+        damping: 18,
+        duration: 1.8,
+      }}
+      style={{
+        position: 'absolute',
         zIndex: 30,
         filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.10))',
+        pointerEvents: 'none',
       }}
-      strokeWidth={2.2}
-    />
+      className="drop-shadow-lg"
+    >
+      <Plane
+        className="w-12 h-12 text-primary"
+        strokeWidth={2.2}
+      />
+    </motion.div>
   );
 }
 
@@ -94,7 +99,7 @@ export default function Hero() {
   const [typedMain, typedSub] = useInfiniteTypewriter(lines, 38, 1200);
 
   return (
-    <SectionPadding className="relative flex flex-col-reverse md:flex-row items-center justify-between py-20 min-h-[450px] md:min-h-[600px] overflow-hidden">
+    <SectionPadding className="relative flex flex-col-reverse md:flex-row items-center justify-between py-10 sm:py-20 min-h-[450px] md:min-h-[600px] overflow-hidden">
       {/* Randomly moving plane */}
       <RandomMovingPlane />
       {/* Left Content */}
@@ -130,7 +135,7 @@ export default function Hero() {
         <img
           src="/plane.jpg"
           alt="Plane"
-          className="w-48 h-48 sm:w-72 sm:h-72 md:w-[350px] md:h-[350px] lg:w-[400px] lg:h-[400px] object-cover rounded-full shadow-lg"
+          className="w-80 h-80 sm:w-100 sm:h-100 md:w-[450px] md:h-[450px] lg:w-[400px] lg:h-[400px] object-cover rounded-full shadow-lg"
         />
       </div>
       {/* Overlay */}
