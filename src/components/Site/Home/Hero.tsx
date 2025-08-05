@@ -56,7 +56,7 @@ export default function Hero() {
       <div className="relative z-10 flex-1 flex items-center w-full md:w-auto mt-8 md:mt-0">
         <div className="w-full max-w-3xl">
           <div className="relative mb-6">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground/80 leading-tight text-center md:text-left min-h-[3.5em]">
+            <h1 className="text-4xl lg:text-5xl font-bold text-foreground/80 leading-tight text-left min-h-[230px] sm:min-h-[200px]">
               <span>{typedMain}</span>
               <br />
               <span className="text-primary">{typedSub}</span>
@@ -81,11 +81,7 @@ export default function Hero() {
         </div>
       </div>
       {/* Right Image - Interactive World Map */}
-      <div className="flex-1 flex justify-center md:justify-end w-full md:w-auto">
-        <div className="w-80 h-80 sm:w-100 sm:h-100 md:w-[450px] md:h-[450px] lg:w-[400px] lg:h-[400px] rounded-full shadow-xl">
-          <InteractiveWorldMap />
-        </div>
-      </div>
+      <InteractiveWorldMap />
       {/* Overlay */}
       <div className="absolute inset-0 bg-primary/10 pointer-events-none" />
     </SectionPadding>
