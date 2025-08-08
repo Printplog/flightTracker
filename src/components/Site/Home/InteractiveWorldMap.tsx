@@ -41,8 +41,7 @@ export default function InteractiveWorldMap() {
       // Calculate position of the hover div relative to the container
       const left = bbox.x + svgRect.left - containerRect.left;
       const top = bbox.y + svgRect.top - containerRect.top;
-      setX(left);
-      setY(top);
+      
 
       setHoverDivStyle({
         position: "absolute",
