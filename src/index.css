@@ -125,3 +125,17 @@
     font-family: "Montserrat";
   }
 }
+
+/* Infinite marquee animation for logos */
+@keyframes marquee-x {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee:hover .animate-marquee-x {
+  animation-play-state: paused;
+}
+
+.animate-marquee-x {
+  animation: marquee-x 28s linear infinite;
+}

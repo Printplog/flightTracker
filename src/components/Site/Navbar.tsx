@@ -26,8 +26,8 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <nav className="border-b relative backdrop-blur supports-[backdrop-filter]:bg-background/60 z-[999]">
-      <SectionPadding className="flex justify-between items-center py-4 lg:py-6">
+    <nav className="border-b relative backdrop-blur supports-[backdrop-filter]:bg-background/60 z-[99999]">
+      <SectionPadding className="flex justify-between items-center py-4 lg:py-6 sticky top-0">
         {/* Logo */}
         <div className="flex items-center gap-2">
           {/* <img src="/logo.png" alt="" className='size-[30px]' /> */}
@@ -80,9 +80,9 @@ export default function Navbar() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="absolute top-full left-0 right-0 lg:hidden bg-background backdrop-blur-lg border-b shadow-lg z-[20]">
+          <div className="absolute top-full left-0 right-0 h-[100vh]  lg:hidden bg-background backdrop-blur-lg border-b shadow-lg z-[20]">
             <SectionPadding className="py-4">
-              <div className="flex flex-col space-y-4">
+              <div className="flex flex-col items-center space-y-4">
                 {navLinks.map((link, index) => (
                   <a
                     key={link.href}

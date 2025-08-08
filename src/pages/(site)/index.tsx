@@ -9,6 +9,7 @@ import WhyChooseUsSection from "../../components/Site/Home/WhyChooseUs";
 import TrackingComponent from "../../components/Site/Home/ShippingTracker";
 import FeaturesSection from "../../components/Site/Home/Features";
 import PopularFlights from "@/components/Site/Home/PopularFlights";
+import Companies from "@/components/Site/Home/Companies";
 
 export default function Home() {
   const [params] = useSearchParams();
@@ -19,6 +20,7 @@ export default function Home() {
       {!id && (
         <>
           <section id="hero"><Hero /></section>
+          <Companies />
           <section id="features"><FeaturesSection /></section>
           <section id="popular-flights"><PopularFlights /></section>
           <section id="services"><Services /></section>
