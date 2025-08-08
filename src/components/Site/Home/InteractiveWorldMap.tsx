@@ -9,8 +9,6 @@ export default function InteractiveWorldMap() {
   const [hoverDivStyle, setHoverDivStyle] =
     useState<React.CSSProperties | null>(null);
   const [current, setCurrent] = useState(0);
-  const [x, setX] = useState(0);
-  const [y, setY] = useState(0);
 
   const countries = [
     { name: "Nigeria", code: "NG", continent: "Africa" },
