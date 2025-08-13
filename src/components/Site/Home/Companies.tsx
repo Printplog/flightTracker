@@ -1,15 +1,10 @@
 import Marquee from "react-fast-marquee";
 
 export default function Companies() {
-  const logos: string[] = [
-    "/logo.png",
-    "/vite.svg",
-    "/f1.png",
-    "/f2.png",
-    "/f3.png",
-    "/plane.jpg",
-    "/sea.jpg",
-  ];
+  const logos: string[] = Array.from(
+    { length: 16 },
+    (_, index) => `/p${index + 1}.png`
+  ).filter((_, index) => (index + 1) % 4 !== 0); // Skip every 4th image
 
   return (
     <section className="w-full">
