@@ -1,13 +1,33 @@
-import type React from "react"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Separator } from "@/components/ui/separator"
-import { Plane, PlaneTakeoff, PlaneLanding, CheckCircle, Shield, AlertTriangle, Calendar, User } from "lucide-react"
+import type React from "react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Separator } from "@/components/ui/separator";
+import {
+  Plane,
+  PlaneTakeoff,
+  PlaneLanding,
+  CheckCircle,
+  Shield,
+  AlertTriangle,
+  Calendar,
+  User,
+} from "lucide-react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 export const FlightTracker: React.FC = () => {
+  const navigate = useNavigate();
   return (
-    <div className="max-w-2xl mx-auto p-4">
+    <motion.div
+      initial={{ opacity: 0, y: 100 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
+      className="max-w-2xl mx-auto p-4"
+    >
+      <button className="text-sm text- border rounded-sm hover:bg-gray-50 px-5 py-2 mb-4" onClick={() => navigate("/")}>
+        Back
+      </button>
       <Card className="overflow-hidden shadow-lg py-0">
         <CardHeader className="bg-primary text-white py-4">
           <div className="flex items-center justify-between">
@@ -16,11 +36,18 @@ export const FlightTracker: React.FC = () => {
                 <CheckCircle className="w-4 h-4 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-white">Check In Complete</h1>
-                <p className="text-sm text-white/80">Flight confirmed and ready</p>
+                <h1 className="text-xl font-bold text-white">
+                  Check In Complete
+                </h1>
+                <p className="text-sm text-white/80">
+                  Flight confirmed and ready
+                </p>
               </div>
             </div>
-            <Badge variant="secondary" className="bg-white/10 text-white border-white/20 text-sm">
+            <Badge
+              variant="secondary"
+              className="bg-white/10 text-white border-white/20 text-sm"
+            >
               <Calendar className="w-3 h-3 mr-1" />
               21 Jul 2025
             </Badge>
@@ -73,25 +100,36 @@ export const FlightTracker: React.FC = () => {
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div className="space-y-2">
                 <div>
-                  <p className="text-xs font-medium text-muted-foreground">Passenger</p>
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Passenger
+                  </p>
                   <p className="font-semibold">John Jojo</p>
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-muted-foreground">Booking Date</p>
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Booking Date
+                  </p>
                   <p className="font-semibold">20 Jul 2025</p>
                 </div>
               </div>
 
               <div className="space-y-2">
                 <div>
-                  <p className="text-xs font-medium text-muted-foreground">Reference</p>
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Reference
+                  </p>
                   <p className="font-mono text-xs bg-white/10 px-2 py-1 rounded border border-primary/10 break-all">
                     THW7V6KADUPOIPYEADPX
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-muted-foreground">Status</p>
-                  <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50 text-xs">
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Status
+                  </p>
+                  <Badge
+                    variant="outline"
+                    className="text-green-600 border-green-200 bg-green-50 text-xs"
+                  >
                     <Shield className="w-3 h-3 mr-1" />
                     CHECKED IN
                   </Badge>
@@ -106,11 +144,13 @@ export const FlightTracker: React.FC = () => {
             <AlertTriangle className="h-4 w-4 text-amber-600" />
             <AlertDescription className="text-amber-800 text-sm">
               <strong>Test Booking:</strong> This is a test flight booking.
-              <span className="underline decoration-dotted ml-1">Remove watermark to remove warning.</span>
+              <span className="underline decoration-dotted ml-1">
+                Remove watermark to remove warning.
+              </span>
             </AlertDescription>
           </Alert>
         </CardContent>
       </Card>
-    </div>
-  )
-}
+    </motion.div>
+  );
+};
