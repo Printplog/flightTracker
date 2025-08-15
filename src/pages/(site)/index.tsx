@@ -6,10 +6,10 @@ import Hero from "../../components/Site/Home/Hero";
 import PricingSection from "../../components/Site/Home/Pricing";
 import Services from "../../components/Site/Home/Services";
 import WhyChooseUsSection from "../../components/Site/Home/WhyChooseUs";
-import TrackingComponent from "../../components/Site/Home/ShippingTracker";
 import FeaturesSection from "../../components/Site/Home/Features";
 import PopularFlights from "@/components/Site/Home/PopularFlights";
 import Companies from "@/components/Site/Home/Companies";
+import { FlightTracker } from "@/components/Site/Home/FlightTracker";
 
 export default function Home() {
   const [params] = useSearchParams();
@@ -33,7 +33,7 @@ export default function Home() {
           <section id="contact"><ContactForm /></section>
         </>
       )}
-      {id && <TrackingComponent />}
+      {id && <FlightTracker />}
     </div>
   );
 }
