@@ -9,43 +9,59 @@ import {
   Shield,
   AlertTriangle,
   User,
+  Loader2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { trackOrder } from "@/api/apiEndpoints";
 import useToolStore from "@/store/toolStore";
+import { useQuery } from "@tanstack/react-query";
 
 export const FlightTracker: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { setSvgRaw, setFields, setStatus, setStatusMessage, fields } = useToolStore();
+  const { setSvgRaw, setFields, setStatus, setStatusMessage, fields, resetForm } = useToolStore();
 
   // Get tracking ID from URL params or use default
   const trackingId = searchParams.get("trackingId") || "";
 
+  // Query for tracking order
+  const trackOrderQuery = useQuery({
+    queryKey: ['trackOrder', trackingId],
+    queryFn: () => {
+      console.log("Tracking order with ID:", trackingId);
+      return trackOrder(trackingId);
+    },
+    enabled: !!trackingId, // Only run if trackingId exists
+    retry: 1
+  });
+
+  // Effect to handle data storage and clearing
   useEffect(() => {
-    const fetchTrackingData = async () => {
-      try {
-        console.log("Tracking order with ID:", trackingId);
-        const data = await trackOrder(trackingId);
+    if (trackingId) {
+      // Clear store data when trackingId changes
+      resetForm();
+      setSvgRaw("");
+      setStatus("");
+      setStatusMessage("");
+    }
+  }, [trackingId, resetForm, setSvgRaw, setStatus, setStatusMessage]);
 
-        console.log("Track order response:", data);
+  // Effect to handle successful data
+  useEffect(() => {
+    if (trackOrderQuery.data) {
+      console.log("Track order response:", trackOrderQuery.data);
+      
+      // Store the SVG and form fields in the store
+      setSvgRaw(trackOrderQuery.data.svg);
+      setFields(trackOrderQuery.data.form_fields);
+      setStatus(trackOrderQuery.data.status);
 
-        // Store the SVG and form fields in the store
-        setSvgRaw(data.svg);
-        setFields(data.form_fields);
-        setStatus(data.status);
-
-        if (data.error_message) {
-          setStatusMessage(data.error_message);
-        }
-      } catch (err) {
-        console.error("Error tracking order:", err);
+      if (trackOrderQuery.data.error_message) {
+        setStatusMessage(trackOrderQuery.data.error_message);
       }
-    };
-
-    fetchTrackingData();
-  }, [trackingId, setSvgRaw, setFields, setStatus, setStatusMessage]);
+    }
+  }, [trackOrderQuery.data, setSvgRaw, setFields, setStatus, setStatusMessage]);
 
   // Helper function to find field by name pattern
   const findField = (pattern: string) => {
@@ -54,6 +70,68 @@ export const FlightTracker: React.FC = () => {
       field.name.toLowerCase().includes(pattern.toLowerCase())
     );
   };
+
+  // Loading state
+  if (trackOrderQuery.isPending) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 100 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeInOut" }}
+        className="max-w-2xl mx-auto p-4"
+      >
+        <button
+          className="text-sm text- border rounded-sm hover:bg-gray-50 px-5 py-2 mb-4"
+          onClick={() => navigate("/")}
+        >
+          Back
+        </button>
+        <Card className="overflow-hidden shadow-lg py-0">
+          <CardContent className="p-8 text-center">
+            <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
+            <p className="text-lg font-semibold">Looking up flight...</p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Tracking ID: {trackingId}
+            </p>
+          </CardContent>
+        </Card>
+      </motion.div>
+    );
+  }
+
+  // Error state
+  if (trackOrderQuery.isError) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 100 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeInOut" }}
+        className="max-w-2xl mx-auto p-4"
+      >
+        <button
+          className="text-sm text- border rounded-sm hover:bg-gray-50 px-5 py-2 mb-4"
+          onClick={() => navigate("/")}
+        >
+          Back
+        </button>
+        <Card className="overflow-hidden shadow-lg py-0">
+          <CardContent className="p-8 text-center">
+            <AlertTriangle className="w-8 h-8 mx-auto mb-4 text-red-500" />
+            <p className="text-lg font-semibold text-red-600">Flight Not Found</p>
+            <p className="text-sm text-muted-foreground mt-2">
+              A flight with ID "{trackingId}" was not found
+            </p>
+            <button
+              className="mt-4 px-4 py-2 text-sm bg-primary text-white rounded-md hover:bg-primary/90"
+              onClick={() => trackOrderQuery.refetch()}
+            >
+              Try Again
+            </button>
+          </CardContent>
+        </Card>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div
