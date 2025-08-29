@@ -41,7 +41,7 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               onClick={e => handleSmoothScroll(e, link.href)}
-              className={`transition-colors text-xs font-medium ${index === 0 ? 'text-primary' : 'text-foreground hover:text-primary'}`}
+              className={`transition-colors text-sm font-medium ${index === 0 ? 'text-primary' : 'text-foreground hover:text-primary'}`}
             >
               {link.label}
             </a>

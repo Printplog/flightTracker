@@ -7,10 +7,10 @@ export default function Companies() {
   ).filter((_, index) => (index + 1) % 4 !== 0); // Skip every 4th image
 
   return (
-    <section className="w-full">
+    <section className="w-full py-10">
       <div className="mx-auto max-w-5xl">
         <h3 className="mb-6 text-center text-sm font-medium text-muted-foreground">
-          Trusted by logistics leaders
+          Partners
         </h3>
 
         <div className="relative marquee overflow-hidden">
@@ -25,7 +25,7 @@ export default function Companies() {
                     key={`${src}-${idx}`}
                     src={src}
                     alt={`Logo ${idx + 1}`}
-                    className="h-10 w-auto opacity-80 transition-opacity hover:opacity-100"
+                    className="h-30 w-30 object-contain opacity-80 transition-opacity hover:opacity-100"
                     draggable={false}
                   />
                 ))}

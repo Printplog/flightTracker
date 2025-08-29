@@ -51,7 +51,8 @@ export default function Hero() {
   const [typedMain] = useInfiniteTypewriter(lines, 38, 1200);
 
   return (
-    <SectionPadding className="relative flex flex-col-reverse lg:flex-row gap-20 items-center justify-between py-10 sm:py-20 min-h-[450px] md:min-h-[600px] overflow-hidden">
+    <SectionPadding className="relative bg-gradient-to-b from-primary/50 to-transparent flex flex-col-reverse lg:flex-row gap-20 items-center justify-between py-10 sm:py-20 min-h-[450px] md:min-h-[600px] overflow-hidden">
+     
       {/* Left Content */}
       <div className="relative flex-1 flex  w-full  mt-8 md:mt-0">
         <div className="w-full flex flex-col items-start">
