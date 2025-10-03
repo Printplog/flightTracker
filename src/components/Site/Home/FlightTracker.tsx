@@ -63,8 +63,15 @@ export const FlightTracker: React.FC = () => {
     }
   }, [trackOrderQuery.data, setSvgRaw, setFields, setStatus, setStatusMessage]);
 
-  // Helper function to find field by name pattern
-  const findField = (pattern: string) => {
+  // Helper function to find field by tracking role or name pattern
+  const findField = (pattern: string, role?: string) => {
+    // First try to find by tracking role if provided
+    if (role) {
+      const fieldByRole = fields.find(field => field.trackingRole === role);
+      if (fieldByRole) return fieldByRole;
+    }
+    
+    // Fall back to pattern matching
     return fields.find(field => 
       field.id.toLowerCase().includes(pattern.toLowerCase()) || 
       field.name.toLowerCase().includes(pattern.toLowerCase())
@@ -168,12 +175,13 @@ export const FlightTracker: React.FC = () => {
         <CardContent className="p-4 space-y-4">
           {/* Flight Details */}
           {(() => {
-            const flightDepartureField = findField("Flight_Departure_Location");
-            const flightArrivalField = findField("Flight_Arrival_Location");
-            const secondFlightDepartureField = findField("Second_Flight_Departure_Location");
-            const secondFlightArrivalField = findField("Second_Flight_Arrival_Location");
-            const thirdFlightDepartureField = findField("Third_Flight_Departure_Location");
-            const thirdFlightArrivalField = findField("Third_Flight_Arrival_Location");
+            // Try to find fields by tracking role first, fall back to pattern matching
+            const flightDepartureField = findField("Flight_Departure_Location", "origin1");
+            const flightArrivalField = findField("Flight_Arrival_Location", "destination1");
+            const secondFlightDepartureField = findField("Second_Flight_Departure_Location", "origin2") || findField("Return_Flight_Departure_Location", "origin2");
+            const secondFlightArrivalField = findField("Second_Flight_Arrival_Location", "destination2") || findField("Return_Flight_Arrival_Location", "destination2");
+            const thirdFlightDepartureField = findField("Third_Flight_Departure_Location", "origin3");
+            const thirdFlightArrivalField = findField("Third_Flight_Arrival_Location", "destination3");
 
             const flightDetailsArray = [];
 
@@ -190,13 +198,17 @@ export const FlightTracker: React.FC = () => {
               }
             }
 
-            // Second flight
+            // Second flight (could be return flight or connecting flight)
             if (secondFlightDepartureField && secondFlightArrivalField) {
               const departure = secondFlightDepartureField.currentValue || secondFlightDepartureField.defaultValue;
               const arrival = secondFlightArrivalField.currentValue || secondFlightArrivalField.defaultValue;
               if (departure && arrival) {
+                // Check if this is a return flight by looking at the field names
+                const isReturnFlight = secondFlightDepartureField.id.toLowerCase().includes('return') || 
+                                     secondFlightArrivalField.id.toLowerCase().includes('return');
+                
                 flightDetailsArray.push({
-                  label: "Second Flight Details",
+                  label: isReturnFlight ? "Return Flight Details" : "Second Flight Details",
                   departure: departure,
                   arrival: arrival
                 });
@@ -244,14 +256,20 @@ export const FlightTracker: React.FC = () => {
               Booking Details
             </h3>
             {(() => {
-              const passengerField = findField("passenger_name") || findField("passenger");
-              const statusField = findField("status");
-              const dateField = findField("date") || findField("booking_date");
+              const passengerField = findField("passenger_name", "name") || findField("passenger", "name");
+              const statusField = findField("status", "status");
+              const dateField = findField("date", "date") || findField("booking_date", "date");
+              const flightNumberField = findField("flight_number", "flight");
 
               const detailsArray = [
                 {
                   label: "Passenger",
                   value: passengerField?.currentValue || passengerField?.defaultValue || "John Jojo",
+                  type: "field"
+                },
+                {
+                  label: "Flight Number",
+                  value: flightNumberField?.currentValue || flightNumberField?.defaultValue || "FL123",
                   type: "field"
                 },
                 {
