@@ -68,6 +68,24 @@ export const FlightTracker: React.FC = () => {
     return fields.find(field => field.trackingRole === role);
   };
 
+  // Resolve a field's display value, mapping option IDs to labels when needed
+  const getFieldDisplayValue = (field: any): string | number | boolean | undefined => {
+    if (!field) return undefined;
+    const rawValue = field.currentValue ?? field.defaultValue;
+    if (rawValue === undefined || rawValue === null) return undefined;
+
+    // If field has select options, map svgElementId/value to label/displayText
+    if (Array.isArray(field.options) && field.options.length > 0) {
+      const rawStr = String(rawValue);
+      const match = field.options.find((opt: any) => opt.svgElementId === rawStr || String(opt.value) === rawStr);
+      if (match) {
+        // Prefer human-friendly label, then displayText, else raw value
+        return match.label ?? match.displayText ?? match.value;
+      }
+    }
+    return rawValue;
+  };
+
   // Loading state
   if (trackOrderQuery.isPending) {
     return (
@@ -177,8 +195,8 @@ export const FlightTracker: React.FC = () => {
 
             // First flight
             if (flightDepartureField && flightArrivalField) {
-              const departure = flightDepartureField.currentValue || flightDepartureField.defaultValue;
-              const arrival = flightArrivalField.currentValue || flightArrivalField.defaultValue;
+              const departure = getFieldDisplayValue(flightDepartureField);
+              const arrival = getFieldDisplayValue(flightArrivalField);
               if (departure && arrival) {
                 flightDetailsArray.push({
                   label: "Flight Details",
@@ -190,8 +208,8 @@ export const FlightTracker: React.FC = () => {
 
             // Second flight (could be return flight or connecting flight)
             if (secondFlightDepartureField && secondFlightArrivalField) {
-              const departure = secondFlightDepartureField.currentValue || secondFlightDepartureField.defaultValue;
-              const arrival = secondFlightArrivalField.currentValue || secondFlightArrivalField.defaultValue;
+              const departure = getFieldDisplayValue(secondFlightDepartureField);
+              const arrival = getFieldDisplayValue(secondFlightArrivalField);
               if (departure && arrival) {
                 flightDetailsArray.push({
                   label: "Second Flight Details",
@@ -203,8 +221,8 @@ export const FlightTracker: React.FC = () => {
 
             // Third flight
             if (thirdFlightDepartureField && thirdFlightArrivalField) {
-              const departure = thirdFlightDepartureField.currentValue || thirdFlightDepartureField.defaultValue;
-              const arrival = thirdFlightArrivalField.currentValue || thirdFlightArrivalField.defaultValue;
+              const departure = getFieldDisplayValue(thirdFlightDepartureField);
+              const arrival = getFieldDisplayValue(thirdFlightArrivalField);
               if (departure && arrival) {
                 flightDetailsArray.push({
                   label: "Third Flight Details",
@@ -250,12 +268,12 @@ export const FlightTracker: React.FC = () => {
               const detailsArray = [
                 {
                   label: "Passenger",
-                  value: passengerField?.currentValue || passengerField?.defaultValue,
+                  value: getFieldDisplayValue(passengerField),
                   type: "field"
                 },
                 {
                   label: "Flight Number",
-                  value: flightNumberField?.currentValue || flightNumberField?.defaultValue,
+                  value: getFieldDisplayValue(flightNumberField),
                   type: "field"
                 },
                 {
@@ -265,12 +283,12 @@ export const FlightTracker: React.FC = () => {
                 },
                 {
                   label: "Booking Status", 
-                  value: statusField?.currentValue || statusField?.defaultValue,
+                  value: getFieldDisplayValue(statusField),
                   type: "status"
                 },
                 {
                   label: "Booking Date",
-                  value: dateField?.currentValue || dateField?.defaultValue,
+                  value: getFieldDisplayValue(dateField),
                   type: "field"
                 }
               ].filter(detail => !!detail.value);
