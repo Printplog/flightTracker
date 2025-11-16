@@ -315,15 +315,17 @@ export const FlightTracker: React.FC = () => {
           </div>
           <Separator className="bg-primary/10" />
 
-          <Alert className="border-amber-200 bg-amber-50 py-2">
-            <AlertTriangle className="h-4 w-4 text-amber-600" />
-            <AlertDescription className="text-amber-800 text-sm">
-              <strong>Test Booking:</strong> This is a test flight booking.
-              <span className="underline decoration-dotted ml-1">
-                Remove watermark to remove warning.
-              </span>
-            </AlertDescription>
-          </Alert>
+          {trackOrderQuery.data?.test && (
+            <Alert className="border-amber-200 bg-amber-50 py-2">
+              <AlertTriangle className="h-4 w-4 text-amber-600" />
+              <AlertDescription className="text-amber-800 text-sm">
+                <strong>Test Booking:</strong> This is a test flight booking.
+                <span className="underline decoration-dotted ml-1">
+                  Remove watermark to remove warning.
+                </span>
+              </AlertDescription>
+            </Alert>
+          )}
         </CardContent>
       </Card>
     </motion.div>
