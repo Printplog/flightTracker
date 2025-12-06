@@ -11,23 +11,23 @@ export default function WhyChooseUsSection(): React.JSX.Element {
   const features: Feature[] = [
     {
       id: 1,
-      text: "Access to exclusive flight deals",
+      text: "Track flights from any airline worldwide",
     },
     {
       id: 2,
-      text: "Comprehensive global route coverage",
+      text: "Real-time global flight monitoring and status updates",
     },
     {
       id: 3,
-      text: "User-friendly booking experience",
+      text: "Comprehensive coverage of international and domestic routes",
     },
     {
       id: 4,
-      text: "Cost-effective travel options",
+      text: "24/7 worldwide flight tracking and instant notifications",
     },
     {
       id: 5,
-      text: "Expert travel insights and support",
+      text: "Professional global flight tracking expertise and support",
     },
   ];
 
@@ -42,10 +42,10 @@ export default function WhyChooseUsSection(): React.JSX.Element {
               WHY CHOOSE US
             </h2>
             <h3 className="text-lg md:text-2xl font-bold text-[#6C63FF] mb-4 uppercase">
-              Your Preferred Travel Booking Partner
+              Your Global Flight Tracking Expert
             </h3>
             <p className="text-gray-700 text-base leading-relaxed">
-              At MySkyRoute, we take pride in being your go-to partner for all your travel booking needs. We are committed to providing you with seamless flight options and tailored travel solutions that make your journey stress-free and enjoyable.
+              At MyFlightLookup, we specialize in comprehensive worldwide flight tracking and booking services. Our advanced platform enables you to track any flight from any airline, anywhere in the world, with real-time accuracy and reliability. We're committed to providing seamless global flight monitoring solutions that keep you informed, no matter where your journey takes you.
             </p>
           </div>
 

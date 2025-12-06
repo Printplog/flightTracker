@@ -12,39 +12,39 @@ export default function Services() {
   const services = [
     {
       icon: <Plane className="w-8 h-8 text-primary" />,
-      title: "Exclusive Flight Deals",
+      title: "Global Flight Tracking",
       description:
-        "Access exclusive flight deals and promotions, sourced from our network of airline partners to ensure you get the best prices on your travel.",
+        "Track any flight worldwide in real-time, regardless of airline or destination. Monitor flights from major international carriers and regional airlines across all continents with accurate, up-to-the-minute status updates.",
     },
     {
       icon: <Globe2 className="w-8 h-8 text-primary" />,
-      title: "Global Destinations",
+      title: "Worldwide Coverage",
       description:
-        "Explore destinations across the globe with our comprehensive flight search engine that connects you to over a thousand international and domestic routes.",
+        "Comprehensive coverage spanning thousands of airports and airlines globally. Whether tracking domestic routes or international flights across multiple time zones, we provide complete visibility into your flight's journey anywhere in the world.",
     },
     {
       icon: <CalendarCheck2 className="w-8 h-8 text-primary" />,
-      title: "Flexible Booking Options",
+      title: "Real-Time Monitoring",
       description:
-        "Enjoy flexible booking options with features like free cancellation, easy rebooking, and cancellation policies tailored for your convenience.",
+        "Get instant alerts on flight delays, gate changes, cancellations, and arrivals for any flight worldwide. Our advanced tracking system monitors flights 24/7, keeping you informed from departure to landing, no matter where your flight is headed.",
     },
     {
       icon: <Headphones className="w-8 h-8 text-primary" />,
-      title: "24/7 Customer Support",
+      title: "24/7 Global Support",
       description:
-        "Get round-the-clock support from our dedicated team to assist you with any booking queries, travel concerns, or last minute changes.",
+        "Access round-the-clock support from our dedicated team, ready to assist with tracking inquiries, booking questions, or flight information for any destination worldwide. Our experts are available whenever you need help, regardless of your time zone.",
     },
     {
       icon: <CreditCard className="w-8 h-8 text-primary" />,
-      title: "Secure Payments",
+      title: "Secure Global Booking",
       description:
-        "Book with confidence using our secure payment system that ensures your data and transactions are protected every step of the way.",
+        "Book flights worldwide with confidence using our secure, encrypted payment system. Whether booking domestic or international routes, your financial data and transactions are protected with enterprise-grade security protocols.",
     },
     {
       icon: <BookOpen className="w-8 h-8 text-primary" />,
-      title: "Travel Insights",
+      title: "International Travel Intelligence",
       description:
-        "Gain valuable insights with our travel guides, tips, and up-to-date information on travel restrictions and requirements to help you plan the perfect trip.",
+        "Access comprehensive travel intelligence including real-time flight tracking, airport information, airline updates, and destination insights for any location worldwide. Stay informed about travel restrictions, requirements, and flight statuses globally.",
     },
   ];
 
@@ -56,7 +56,7 @@ export default function Services() {
           WHAT WE OFFER
         </h2>
         <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-          Tailored Solutions to Streamline Your Travel Experience.
+          Professional Flight Tracking Services for Every Destination Worldwide.
         </p>
       </div>
 

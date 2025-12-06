@@ -4,44 +4,44 @@ import SectionPadding from "../../../layouts/SectionPadding";
 
 const faqs = [
   {
-    question: "Can I book flights with multiple airlines?",
+    question: "Can I track flights from any airline worldwide?",
     answer:
-      "Yes, you can seamlessly book flights with multiple airlines through our platform to ensure you get the best possible routes and prices for your trip.",
+      "Yes, absolutely. MyFlightLookup provides comprehensive global flight tracking coverage, allowing you to monitor flights from thousands of airlines across all continents. Whether it's a major international carrier or a regional airline, you can track any flight, anywhere in the world, in real-time.",
   },
   {
-    question: "How do I change my booking?",
+    question: "How do I track a flight from another country?",
     answer:
-      "You can change your booking details directly through our website by accessing the 'Manage Booking' section or by contacting our customer support for assistance.",
+      "Simply enter your booking reference or flight number on our homepage. Our platform tracks flights globally, regardless of the airline's origin country or your location. Real-time updates are available 24/7 for flights worldwide, including international routes spanning multiple countries and continents.",
   },
   {
-    question: "What is your cancellation policy?",
+    question: "Do you provide real-time tracking for international flights?",
     answer:
-      "Our cancellation policy varies by airline. Typically, you can cancel up to 24 hours after booking for a full refund depending on the fare conditions. Please check the specific terms while booking.",
+      "Yes, we offer real-time flight tracking for international flights worldwide. Our system monitors flights continuously, providing instant updates on departure times, delays, gate changes, in-flight status, and arrivals for any international route, no matter the destination or airline.",
   },
   {
-    question: "What forms of payment do you accept?",
+    question: "What information can I track for flights globally?",
     answer:
-      "We accept various forms of payment including credit cards, debit cards, PayPal, and several other payment gateways. Specific options available may vary depending on the country of booking.",
+      "Our global tracking system provides comprehensive flight information including real-time status, departure and arrival times, gate assignments, terminal information, delay notifications, aircraft type, and current location. This information is available for flights worldwide, updated continuously from takeoff to landing.",
   },
   {
-    question: "How can I check the status of my flight?",
+    question: "How accurate is the flight tracking information?",
     answer:
-      "You can check the status of your flight by logging into your account on our website and navigating to the 'My Trips' section, or by entering your booking reference on our flight status page.",
+      "Our flight tracking system provides highly accurate, real-time data sourced directly from airlines and aviation authorities worldwide. Information is updated continuously, ensuring you receive the most current flight status for any flight globally, with 99.9% accuracy for on-time updates.",
   },
   {
-    question: "How can I get a receipt for my booking?",
+    question: "Can I track connecting flights or multi-city itineraries?",
     answer:
-      "You can download the receipt for your booking from the 'My Bookings' section of your account after your ticket has been issued.",
+      "Yes, you can track all segments of your journey, including connecting flights and multi-city itineraries. Our platform monitors each flight leg independently, providing real-time updates for every segment of your trip, whether traveling domestically or across multiple countries.",
   },
   {
-    question: "Do you offer group booking discounts?",
+    question: "Do you track flights from all countries and regions?",
     answer:
-      "Yes, we offer special rates for group bookings. If you are traveling with a group of 10 or more, please contact our customer support to avail of customized discounts.",
+      "Yes, MyFlightLookup offers comprehensive global coverage, tracking flights from airlines in all countries and regions worldwide. Whether monitoring flights in North America, Europe, Asia, Africa, South America, or Oceania, our platform provides complete visibility into flight statuses globally.",
   },
   {
-    question: "What should I do if I have special travel needs?",
+    question: "How quickly are flight status updates available?",
     answer:
-      "If you have any special travel needs (such as wheelchair assistance, dietary restrictions, etc.), please inform us at the time of booking so we can make the necessary arrangements with the airline.",
+      "Flight status updates are provided in real-time, with changes reflected immediately as they occur. Our system continuously monitors flights worldwide and delivers instant notifications for delays, cancellations, gate changes, and arrivals, ensuring you always have the latest information regardless of your location.",
   },
 ];
 
@@ -67,7 +67,7 @@ export default function FAQSection(): React.JSX.Element {
           </h2>
           <div className="w-24 h-1 bg-primary mx-auto mb-6"></div>
           <p className="text-gray-600 text-sm max-w-2xl mx-auto">
-            Find answers to common questions about our booking, payment, and support.
+            Find answers to common questions about our global flight tracking services and worldwide coverage.
           </p>
         </div>
 

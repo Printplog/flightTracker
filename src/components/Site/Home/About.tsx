@@ -33,20 +33,20 @@ export default function AboutSection() {
           {/* Right: Content */}
           <div className="md:w-1/2 flex flex-col justify-center px-8 py-10 space-y-6">
             <h2 className="text-2xl md:text-3xl font-extrabold text-foreground mb-2">
-              Making Air Travel Simple, Affordable, and Transparent
+              Track Any Flight Worldwide, Anytime
             </h2>
             <p className="text-muted-foreground text-base leading-relaxed">
-              MyFlightLookup is your trusted partner for booking and tracking flights worldwide. Our mission is to empower travelers with seamless booking, real-time flight tracking, and unbeatable deals—so you can travel smarter, every time.
+              MyFlightLookup provides comprehensive global flight tracking and booking services. Track flights from any airline, anywhere in the world, with real-time updates and complete transparency. Whether you're monitoring a domestic route or an international journey spanning multiple continents, we deliver accurate, up-to-the-minute flight information to keep you informed.
             </p>
             <ul className="space-y-2 text-muted-foreground text-base pl-4 list-disc">
               <li>
-                <span className="font-semibold text-primary">Global Coverage:</span> Search and book flights to 1,000+ destinations.
+                <span className="font-semibold text-primary">Worldwide Coverage:</span> Track flights from thousands of airlines across all continents and countries.
               </li>
               <li>
-                <span className="font-semibold text-primary">Expert Support:</span> Friendly travel experts available around the clock.
+                <span className="font-semibold text-primary">Real-Time Updates:</span> Get instant notifications with live flight status, delays, gate changes, and arrivals from anywhere in the world.
               </li>
               <li>
-                <span className="font-semibold text-primary">Smart Technology:</span> Real-time flight tracking and instant notifications.
+                <span className="font-semibold text-primary">Global Airline Network:</span> Monitor flights from major international carriers and regional airlines worldwide.
               </li>
             </ul>
             {/* Stats Row */}

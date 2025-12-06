@@ -60,7 +60,7 @@ export default function ContactPage() {
                     href="mailto:info@mycargolane.com"
                     className="text-base text-foreground hover:text-primary transition break-all"
                   >
-                    info@mycargolane.com
+                    info@myflightlookup.com
                   </a>
                 </li>
                 <li className="flex items-center gap-4">

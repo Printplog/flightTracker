@@ -47,7 +47,7 @@ export default function Hero() {
   const navigate = useNavigate();
 
   // Both lines typewritten, infinite
-  const lines = ['TRACK YOUR FLIGHT WITH EASE ANY PLACE ANYWHERE', 'ANY PLACE ANYWHERE'];
+  const lines = ['TRACK ANY FLIGHT, ANYWHERE IN THE WORLD', 'REAL-TIME GLOBAL FLIGHT TRACKING'];
   const [typedMain] = useInfiniteTypewriter(lines, 38, 1200);
 
   return (
@@ -68,7 +68,7 @@ export default function Hero() {
               type="text"
               value={trackingCode}
               onChange={(e) => setTrackingCode(e.target.value)}
-              placeholder="Enter tracking number..."
+              placeholder="Enter booking reference or flight number..."
               className="flex-1 px-4 py-3 text-gray-900 bg-white border border-gray-200 rounded-md sm:rounded-r-none sm:rounded-l-md focus:outline-none focus:ring-2 focus:ring-primary/30 placeholder-gray-500"
             />
             <button

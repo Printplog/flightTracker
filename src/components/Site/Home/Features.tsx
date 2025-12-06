@@ -4,18 +4,18 @@ import SectionPadding from '../../../layouts/SectionPadding';
 const features = [
   {
     imgSrc: '/f1.png', // Replace with actual path or import for f1.png
-    title: 'One search, all the flights',
-    description: 'Finds cheap flights other sites can’t see.'
+    title: 'Track Any Flight, Anywhere in the World',
+    description: 'Monitor flights from thousands of airlines globally with comprehensive worldwide coverage and real-time updates.'
   },
   {
     imgSrc: '/f2.png', // Replace with actual path or import for f2.png
-    title: 'Travel more, spend less',
-    description: 'Look for the travel hack star icon for unique travel itineraries.'
+    title: 'Global Real-Time Tracking',
+    description: 'Receive instant updates on flight status, delays, gate changes, and arrivals for any flight worldwide, 24/7.'
   },
   {
     imgSrc: '/f3.png', // Replace with actual path or import for f3.png
-    title: 'Trusted by millions',
-    description: 'Join over 10 million yearly travelers booking with ease.'
+    title: 'Trusted Worldwide',
+    description: 'Join millions of travelers who rely on our global flight tracking platform for accurate, real-time flight information from anywhere in the world.'
   }
 ];
 

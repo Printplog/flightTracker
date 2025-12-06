@@ -6,7 +6,7 @@ export default function Footer() {
   const handleSubscribe = (): void => {
     if (email) {
       console.log('Subscribed with email:', email);
-      alert('Thank you for subscribing to MySkyRoute updates!');
+      alert('Thank you for subscribing to MyFlightLookup updates!');
       setEmail('');
     } else {
       alert('Please enter your email address');
@@ -21,15 +21,15 @@ export default function Footer() {
     <footer className="bg-foreground/90 text-white py-16 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          {/* About MySkyRoute */}
+          {/* About MyFlightLookup */}
           <div>
             <h3 className="text-lg font-bold mb-6 text-primary">
-              ABOUT MYSKYROUTE
+              ABOUT MYFLIGHTLOOKUP
             </h3>
             <p className="text-gray-200 leading-relaxed text-sm">
-              MySkyRoute is your trusted partner for seamless flight bookings and real-time tracking. 
-              We connect you to the best flight deals, global destinations, and a hassle-free travel experience. 
-              Our mission is to make your journey smooth, affordable, and memorable—every time you fly.
+              MyFlightLookup is your trusted partner for comprehensive worldwide flight tracking and booking services. 
+              Track any flight from any airline, anywhere in the world, with real-time updates and complete global coverage. 
+              Our mission is to provide accurate, reliable flight tracking that keeps you informed, no matter where your journey takes you across the globe.
             </p>
           </div>
 
@@ -88,7 +88,7 @@ export default function Footer() {
               STAY UPDATED
             </h3>
             <p className="text-gray-200 text-sm mb-4">
-              Get the latest flight deals, travel tips, and exclusive offers straight to your inbox.
+              Get the latest global flight tracking updates, travel insights, and exclusive offers straight to your inbox.
             </p>
             <form
               className="flex flex-col sm:flex-row gap-2 w-full"
@@ -115,7 +115,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-12 border-t border-white/10 pt-8 text-center text-xs text-gray-300">
-          &copy; {new Date().getFullYear()} MySkyRoute. All rights reserved.
+          &copy; {new Date().getFullYear()} MyFlightLookup. All rights reserved.
         </div>
     </footer>
   );
