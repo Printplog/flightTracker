@@ -163,6 +163,15 @@ export default function PricingSection(): React.JSX.Element {
               {/* CTA Button */}
               <div className="mt-auto">
                 <button
+                  onClick={() => {
+                    const contact = document.getElementById('contact');
+                    if (contact) {
+                      const navbarHeight = 80;
+                      const elementPosition = contact.getBoundingClientRect().top;
+                      const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+                      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                    }
+                  }}
                   className={`
                     w-full py-3 px-6 rounded-xl font-semibold text-base transition-all duration-200
                     ${plan.isPopular
@@ -178,7 +187,22 @@ export default function PricingSection(): React.JSX.Element {
         </div>
         {/* Subtext */}
         <div className="text-center mt-14 text-muted-foreground text-sm">
-          Need a custom plan? <a href="#contact" className="text-primary underline font-medium">Contact us</a> for enterprise solutions.
+          Need help? <a 
+            href="#contact" 
+            onClick={(e) => {
+              e.preventDefault();
+              const contact = document.getElementById('contact');
+              if (contact) {
+                const navbarHeight = 80;
+                const elementPosition = contact.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+              }
+            }}
+            className="text-primary underline font-medium hover:text-primary/80"
+          >
+            Contact us
+          </a> for support.
         </div>
       </div>
     </SectionPadding>

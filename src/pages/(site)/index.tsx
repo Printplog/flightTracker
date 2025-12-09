@@ -3,7 +3,7 @@ import AboutSection from "../../components/Site/Home/About";
 import ContactForm from "../../components/Site/Home/Contact";
 import FAQSection from "../../components/Site/Home/FAQ";
 import Hero from "../../components/Site/Home/Hero";
-import PricingSection from "../../components/Site/Home/Pricing";
+import HowItWorksSection from "../../components/Site/Home/HowItWorks";
 import Services from "../../components/Site/Home/Services";
 import WhyChooseUsSection from "../../components/Site/Home/WhyChooseUs";
 import FeaturesSection from "../../components/Site/Home/Features";
@@ -49,8 +49,8 @@ export default function Home() {
           </section>
           {/* <StatsSection /> */}
           {/* <TeamSection /> */}
-          <section id="pricing">
-            <PricingSection />
+          <section id="how-it-works">
+            <HowItWorksSection />
           </section>
           <section id="faq">
             <FAQSection />

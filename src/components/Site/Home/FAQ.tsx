@@ -100,7 +100,18 @@ export default function FAQSection(): React.JSX.Element {
             <p className="text-gray-600 mb-6">
               Our support team is here to help you 24/7
             </p>
-            <button className="bg-primary text-white px-8 py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors duration-200">
+            <button 
+              onClick={() => {
+                const contact = document.getElementById('contact');
+                if (contact) {
+                  const navbarHeight = 80;
+                  const elementPosition = contact.getBoundingClientRect().top;
+                  const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+                  window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                }
+              }}
+              className="bg-primary text-white px-8 py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors duration-200"
+            >
               Contact Support
             </button>
           </div>

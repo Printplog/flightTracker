@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Mail, MapPin, Send } from "lucide-react";
+import { toast } from "sonner";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -22,14 +23,21 @@ export default function ContactPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    setFormData({
-      name: "",
-      email: "",
-      subject: "",
-      message: "",
-    });
-    setTimeout(() => setSubmitted(false), 3500);
+    
+    // Simulate form submission
+    setTimeout(() => {
+      setSubmitted(true);
+      toast.success("Message sent successfully!", {
+        description: "We'll get back to you within 24 hours.",
+      });
+      setFormData({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+      });
+      setTimeout(() => setSubmitted(false), 3500);
+    }, 500);
   };
 
   return (
@@ -141,17 +149,12 @@ export default function ContactPage() {
               <div>
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 px-8 rounded-lg transition-colors shadow"
+                  className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 px-8 rounded-lg transition-colors shadow disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={submitted}
                 >
                   <Send className="w-5 h-5" />
-                  {submitted ? "Message Sent!" : "Send Message"}
+                  {submitted ? "Sending..." : "Send Message"}
                 </button>
-                {submitted && (
-                  <p className="text-green-600 mt-3 text-sm font-medium">
-                    Thank you! Your message has been sent.
-                  </p>
-                )}
               </div>
             </form>
           </div>

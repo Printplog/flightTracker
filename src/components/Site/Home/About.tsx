@@ -66,12 +66,20 @@ export default function AboutSection() {
             </div>
             {/* CTA */}
             <div className="pt-4">
-              <a
-                href="/about"
+              <button
+                onClick={() => {
+                  const contact = document.getElementById('contact');
+                  if (contact) {
+                    const navbarHeight = 80;
+                    const elementPosition = contact.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                  }
+                }}
                 className="inline-block bg-primary text-primary-foreground hover:bg-primary/90 px-7 py-3 rounded-lg font-semibold transition-colors shadow"
               >
-                Discover Our Story
-              </a>
+                Get Started
+              </button>
             </div>
           </div>
         </div>

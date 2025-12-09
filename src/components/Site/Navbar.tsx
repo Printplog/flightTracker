@@ -5,7 +5,7 @@ const navLinks = [
   { href: '#hero', label: 'Home' },
   { href: '#features', label: 'Features' },
   { href: '#services', label: 'Services' },
-  { href: '#pricing', label: 'Pricing' },
+  { href: '#how-it-works', label: 'How It Works' },
   { href: '#faq', label: 'FAQ' },
   { href: '#why-us', label: 'Why Us' },
   { href: '#contact', label: 'Contact' },
@@ -16,7 +16,15 @@ function handleSmoothScroll(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, 
     e.preventDefault();
     const el = document.getElementById(href.substring(1));
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+      // Get navbar height for offset (sticky navbar)
+      const navbarHeight = 80; // Approximate navbar height
+      const elementPosition = el.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
       if (closeMenu) closeMenu();
     }
   }

@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 
 export default function Footer() {
   const [email, setEmail] = useState<string>('');
 
   const handleSubscribe = (): void => {
     if (email) {
-      console.log('Subscribed with email:', email);
-      alert('Thank you for subscribing to MyFlightLookup updates!');
+      toast.success('Subscribed successfully!', {
+        description: 'You will receive flight tracking updates and travel insights.',
+      });
       setEmail('');
     } else {
-      alert('Please enter your email address');
+      toast.error('Please enter your email address');
     }
   };
 
@@ -41,7 +43,17 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <a 
-                  href="#why-choose-us" 
+                  href="#why-us" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const section = document.getElementById('why-us');
+                    if (section) {
+                      const navbarHeight = 80;
+                      const elementPosition = section.getBoundingClientRect().top;
+                      const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+                      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                    }
+                  }}
                   className="text-gray-200 hover:text-white transition-colors text-sm"
                 >
                   Why Choose Us
@@ -49,15 +61,17 @@ export default function Footer() {
               </li>
               <li>
                 <a 
-                  href="#testimonials" 
-                  className="text-gray-200 hover:text-white transition-colors text-sm"
-                >
-                  Testimonials
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#faqs" 
+                  href="#faq" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const section = document.getElementById('faq');
+                    if (section) {
+                      const navbarHeight = 80;
+                      const elementPosition = section.getBoundingClientRect().top;
+                      const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+                      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                    }
+                  }}
                   className="text-gray-200 hover:text-white transition-colors text-sm"
                 >
                   FAQs
@@ -65,15 +79,35 @@ export default function Footer() {
               </li>
               <li>
                 <a 
-                  href="#terms" 
+                  href="#how-it-works" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const section = document.getElementById('how-it-works');
+                    if (section) {
+                      const navbarHeight = 80;
+                      const elementPosition = section.getBoundingClientRect().top;
+                      const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+                      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                    }
+                  }}
                   className="text-gray-200 hover:text-white transition-colors text-sm"
                 >
-                  Terms of Service
+                  How It Works
                 </a>
               </li>
               <li>
                 <a 
                   href="#contact" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const section = document.getElementById('contact');
+                    if (section) {
+                      const navbarHeight = 80;
+                      const elementPosition = section.getBoundingClientRect().top;
+                      const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+                      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                    }
+                  }}
                   className="text-gray-200 hover:text-white transition-colors text-sm"
                 >
                   Contact Support
