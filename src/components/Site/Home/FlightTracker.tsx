@@ -2,14 +2,11 @@ import type React from "react";
 import { useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Shield,
   AlertTriangle,
   User,
   Loader2,
-  PlaneTakeoff,
-  PlaneLanding,
   Plane,
   Calendar,
   Hash,
