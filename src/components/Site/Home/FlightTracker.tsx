@@ -162,7 +162,7 @@ export const FlightTracker: React.FC = () => {
             </div>
 
             <div className="p-8 sm:p-12 space-y-12">
-              {/* Simplified Route Display */}
+              {/* Simplified Route Display with CAPS and Lighter Font */}
               {(() => {
                 const origin = getFieldDisplayValue(getFieldByRole("origin1"));
                 const destination = getFieldDisplayValue(getFieldByRole("destination1"));
@@ -173,7 +173,7 @@ export const FlightTracker: React.FC = () => {
                   <div className="flex flex-col md:flex-row items-center justify-between gap-10">
                     <div className="text-center md:text-left space-y-1">
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-outfit">Origin</p>
-                      <h2 className="text-3xl font-bold text-slate-900 tracking-tight font-outfit">{origin}</h2>
+                      <h2 className="text-2xl font-semibold text-slate-900 tracking-tight font-outfit uppercase">{origin}</h2>
                     </div>
 
                     <div className="flex-1 w-full max-w-[180px] flex flex-col items-center gap-3">
@@ -191,14 +191,14 @@ export const FlightTracker: React.FC = () => {
 
                     <div className="text-center md:text-right space-y-1">
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-outfit">Destination</p>
-                      <h2 className="text-3xl font-bold text-slate-900 tracking-tight font-outfit">{destination}</h2>
+                      <h2 className="text-2xl font-semibold text-slate-900 tracking-tight font-outfit uppercase">{destination}</h2>
                     </div>
                   </div>
                 );
               })()}
 
-              {/* Minimal Info Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-2">
+              {/* Individual Bordered Info Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
                 {[
                   { label: "Passenger", field: "name", icon: User },
                   { label: "Flight No", field: "flight", icon: Hash },
@@ -209,7 +209,7 @@ export const FlightTracker: React.FC = () => {
                   if (!val) return null;
 
                   return (
-                    <div key={idx} className="space-y-2">
+                    <div key={idx} className="p-4 border border-slate-100 rounded-xl bg-slate-50/20 hover:bg-slate-50 transition-colors space-y-2">
                       <div className="flex items-center gap-2 text-slate-400">
                         <item.icon className="w-3 h-3" />
                         <span className="text-[10px] font-bold uppercase tracking-wider font-outfit">{item.label}</span>
