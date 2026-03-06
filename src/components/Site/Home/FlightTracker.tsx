@@ -241,8 +241,12 @@ export const FlightTracker: React.FC = () => {
               {[
                 { role: "name", label: "Passenger Name", colSpan: "col-span-2 md:col-span-1" },
                 { role: "date", label: "Booking Date", colSpan: "col-span-2 md:col-span-1" },
+                { role: "airline", label: "Airline", colSpan: "col-span-2 md:col-span-1" },
+                { role: "flight", label: "Flight Number", colSpan: "col-span-2 md:col-span-1" },
                 { role: "departure_date", label: "Departure Date", colSpan: "col-span-2 md:col-span-1" },
+                { role: "departure_time", label: "Departure Time", colSpan: "col-span-2 md:col-span-1" },
                 { role: "arrival_date", label: "Arrival Date", colSpan: "col-span-2 md:col-span-1" },
+                { role: "arrival_time", label: "Arrival Time", colSpan: "col-span-2 md:col-span-1" },
                 { role: "gate", label: "Gate", colSpan: "col-span-1" },
                 { role: "seat", label: "Seat", colSpan: "col-span-1" },
                 { role: "class", label: "Class", colSpan: "col-span-2 md:col-span-1" },
