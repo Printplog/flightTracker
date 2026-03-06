@@ -175,12 +175,19 @@ export const FlightTracker: React.FC = () => {
                 const origin = getFieldDisplayValue(getFieldByRole(`origin${leg}`));
                 const destination = getFieldDisplayValue(getFieldByRole(`destination${leg}`));
                 // Display specific time for leg 1, or generally if just "departure_time" exists
-                // In a real multi-leg setup, we'd want departure_time_1, but adhering to current specific roles:
                 const timeDep = leg === 1 ? getFieldDisplayValue(getFieldByRole("departure_time")) : null;
+                const dateDep = leg === 1 ? getFieldDisplayValue(getFieldByRole("departure_date")) : null;
                 const timeArr = leg === 1 ? getFieldDisplayValue(getFieldByRole("arrival_time")) : null;
+                const dateArr = leg === 1 ? getFieldDisplayValue(getFieldByRole("arrival_date")) : null;
                 const flight = getFieldDisplayValue(getFieldByRole("flight"));
 
                 if (!origin || !destination) return null;
+
+                const renderDateTime = (date: any, time: any) => {
+                  if (!date && !time) return null;
+                  if (date && time) return `${date} • ${time}`;
+                  return date || time;
+                };
 
                 return (
                   <div key={leg} className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-xl p-6 border border-white/10 relative overflow-hidden shadow-lg shadow-slate-900/20">
@@ -193,9 +200,9 @@ export const FlightTracker: React.FC = () => {
                       <div className="text-center md:text-left space-y-1 min-w-[120px]">
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-outfit">Origin</p>
                         <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight font-outfit uppercase">{origin}</h2>
-                        {timeDep && (
+                        {(timeDep || dateDep) && (
                           <div className="text-sm font-medium text-slate-300 mt-1">
-                            {String(timeDep)}
+                            {renderDateTime(dateDep, timeDep)}
                           </div>
                         )}
                       </div>
@@ -217,9 +224,9 @@ export const FlightTracker: React.FC = () => {
                       <div className="text-center md:text-right space-y-1 min-w-[120px]">
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-outfit">Destination</p>
                         <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight font-outfit uppercase">{destination}</h2>
-                        {timeArr && (
+                        {(timeArr || dateArr) && (
                           <div className="text-sm font-medium text-slate-300 mt-1">
-                            {String(timeArr)}
+                            {renderDateTime(dateArr, timeArr)}
                           </div>
                         )}
                       </div>
@@ -233,7 +240,9 @@ export const FlightTracker: React.FC = () => {
             <div className="flex flex-col border-t border-slate-200 mt-6">
               {[
                 { role: "name", label: "Passenger Name", colSpan: "col-span-2 md:col-span-1" },
-                { role: "date", label: "Date", colSpan: "col-span-2 md:col-span-1" },
+                { role: "date", label: "Booking Date", colSpan: "col-span-2 md:col-span-1" },
+                { role: "departure_date", label: "Departure Date", colSpan: "col-span-2 md:col-span-1" },
+                { role: "arrival_date", label: "Arrival Date", colSpan: "col-span-2 md:col-span-1" },
                 { role: "gate", label: "Gate", colSpan: "col-span-1" },
                 { role: "seat", label: "Seat", colSpan: "col-span-1" },
                 { role: "class", label: "Class", colSpan: "col-span-2 md:col-span-1" },
