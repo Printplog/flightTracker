@@ -124,6 +124,13 @@ export const FlightTracker: React.FC = () => {
 
 
 
+  const renderDisplayValue = (val: any) => {
+    if (typeof val === 'string' && (val.startsWith('http') || val.startsWith('data:image/'))) {
+      return <img src={val} alt="display value" className="max-h-12 w-auto object-contain inline-block rounded-md" />;
+    }
+    return val;
+  };
+
   return (
     <div className="max-w-2xl mx-auto p-4 sm:p-6 font-inter bg-gray-100">
       {/* Navigation */}
@@ -189,6 +196,8 @@ export const FlightTracker: React.FC = () => {
                   return date || time;
                 };
 
+
+
                 return (
                   <div key={leg} className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-xl p-6 border border-white/10 relative overflow-hidden shadow-lg shadow-slate-900/20">
                     {/* Leg Label */}
@@ -199,7 +208,7 @@ export const FlightTracker: React.FC = () => {
                     <div className="flex flex-col md:flex-row items-center justify-between gap-8 py-2">
                       <div className="text-center md:text-left space-y-1 min-w-[120px]">
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-outfit">Origin</p>
-                        <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight font-outfit uppercase">{origin}</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight font-outfit uppercase">{renderDisplayValue(origin)}</h2>
                         {(timeDep || dateDep) && (
                           <div className="text-sm font-medium text-slate-300 mt-1">
                             {renderDateTime(dateDep, timeDep)}
@@ -216,14 +225,14 @@ export const FlightTracker: React.FC = () => {
                             <Plane className="w-4 h-4 text-indigo-400 transform rotate-90" />
                           </div>
                         </div>
-                        <div className="px-2 py-0.5 rounded text-[10px] font-bold text-indigo-300 uppercase tracking-widest">
-                          {flight || "In Transit"}
+                        <div className="px-2 py-0.5 rounded text-[10px] font-bold text-indigo-300 uppercase tracking-widest flex items-center justify-center">
+                          {renderDisplayValue(flight) || "In Transit"}
                         </div>
                       </div>
 
                       <div className="text-center md:text-right space-y-1 min-w-[120px]">
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-outfit">Destination</p>
-                        <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight font-outfit uppercase">{destination}</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight font-outfit uppercase">{renderDisplayValue(destination)}</h2>
                         {(timeArr || dateArr) && (
                           <div className="text-sm font-medium text-slate-300 mt-1">
                             {renderDateTime(dateArr, timeArr)}
@@ -262,8 +271,8 @@ export const FlightTracker: React.FC = () => {
                     <div className="flex items-center text-slate-500">
                       <span className="text-[11px] font-bold uppercase tracking-widest font-outfit">{item.label}</span>
                     </div>
-                    <div className="font-bold text-slate-900 text-sm break-words text-right">
-                      {value}
+                    <div className="font-bold text-slate-900 text-sm break-words text-right flex justify-end">
+                      {renderDisplayValue(value)}
                     </div>
                   </div>
                 );
