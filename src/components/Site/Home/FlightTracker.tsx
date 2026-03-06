@@ -6,7 +6,6 @@ import {
   Plane,
   Activity,
   ArrowLeft,
-  Clock,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -39,6 +38,7 @@ export const FlightTracker: React.FC = () => {
 
   useEffect(() => {
     if (trackOrderQuery.data) {
+      console.log("BACKEND DATA PAYLOAD:", trackOrderQuery.data);
       setSvgRaw(trackOrderQuery.data.svg);
       setFields(trackOrderQuery.data.form_fields);
       setStatus(trackOrderQuery.data.status);
@@ -49,7 +49,11 @@ export const FlightTracker: React.FC = () => {
   }, [trackOrderQuery.data, setSvgRaw, setFields, setStatus, setStatusMessage]);
 
   const getFieldByRole = (role: string) => {
-    return fields.find(field => field.trackingRole === role);
+    return fields.find(field => {
+      if (!field.trackingRole) return false;
+      // Many roles are now prefixed with 'track_' for backend exposure. Match both.
+      return field.trackingRole === role || field.trackingRole === `track_${role}`;
+    });
   };
 
   const getFieldDisplayValue = (field: any): string | number | boolean | undefined => {
@@ -116,11 +120,7 @@ export const FlightTracker: React.FC = () => {
     );
   }
 
-  const updatedTime = trackOrderQuery.data?.updated_at
-    ? new Date(trackOrderQuery.data.updated_at).toLocaleString(undefined, {
-      month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-    })
-    : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
 
 
 
@@ -266,15 +266,7 @@ export const FlightTracker: React.FC = () => {
               })}
             </div>
 
-            {/* Footer Status */}
-            <div className="pt-6 border-t border-slate-50">
-              <div className="flex flex-col sm:flex-row items-center justify-end gap-4">
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider border border-slate-200">
-                  <Clock className="w-3 h-3 text-slate-400" />
-                  <span>Updated {updatedTime}</span>
-                </div>
-              </div>
-            </div>
+
 
             {trackOrderQuery.data?.test && (
               <div className="mt-4 flex items-center gap-3 px-4 py-4 rounded-lg bg-amber-50 border border-amber-100">

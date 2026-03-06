@@ -22,7 +22,7 @@ interface ToolStore {
   setStatusWithMessage: (status: string, message: string) => void;
 }
 
-const  useToolStore = create<ToolStore>((set, get) => ({
+const useToolStore = create<ToolStore>((set, get) => ({
   name: "",
   fields: [],
   svgRaw: "",
@@ -34,7 +34,7 @@ const  useToolStore = create<ToolStore>((set, get) => ({
   setFields: (fields) => {
     const initializedFields = fields?.map((field) => ({
       ...field,
-      currentValue: field?.defaultValue ?? "",
+      currentValue: field?.currentValue ?? field?.defaultValue ?? "",
     }));
 
     set({ fields: initializedFields });
