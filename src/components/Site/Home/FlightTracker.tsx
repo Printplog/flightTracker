@@ -69,6 +69,53 @@ export const FlightTracker: React.FC = () => {
     return rawValue;
   };
 
+  // EXTRACT DYNAMIC ITINERARY (LEG-BASED)
+  const getItinerary = () => {
+    const legs: any[] = [];
+    let i = 1;
+    while (true) {
+      const origin = getFieldDisplayValue(getFieldByRole(`origin${i}`));
+      const destination = getFieldDisplayValue(getFieldByRole(`destination${i}`));
+      
+      if (!origin && !destination) break;
+
+      legs.push({
+        index: i,
+        origin,
+        destination,
+        departureDate: getFieldDisplayValue(getFieldByRole(`origin${i}_departure_date`)) || getFieldDisplayValue(getFieldByRole("departure_date")),
+        departureTime: getFieldDisplayValue(getFieldByRole(`origin${i}_departure_time`)) || getFieldDisplayValue(getFieldByRole("departure_time")),
+        arrivalDate: getFieldDisplayValue(getFieldByRole(`destination${i}_arrival_date`)) || getFieldDisplayValue(getFieldByRole("arrival_date")),
+        arrivalTime: getFieldDisplayValue(getFieldByRole(`destination${i}_arrival_time`)) || getFieldDisplayValue(getFieldByRole("arrival_time")),
+        flight: getFieldDisplayValue(getFieldByRole(`flight${i}`)) || getFieldDisplayValue(getFieldByRole("flight"))
+      });
+      i++;
+    }
+    return legs;
+  };
+
+  const itinerary = getItinerary();
+
+  const getFlightType = () => {
+    const explicitType = getFieldDisplayValue(getFieldByRole("flight_type"));
+    if (explicitType) return String(explicitType).toUpperCase();
+
+    if (itinerary.length === 0) return "FLIGHT TRACKER";
+    
+    const firstOrigin = String(itinerary[0].origin || "").toLowerCase().trim();
+    const lastDestination = String(itinerary[itinerary.length - 1].destination || "").toLowerCase().trim();
+
+    if (itinerary.length > 1 && firstOrigin === lastDestination && firstOrigin !== "") {
+      return "RETURN FLIGHT";
+    }
+    
+    if (itinerary.length > 1) return "STOP OVER FLIGHT";
+    
+    return "ONE WAY FLIGHT";
+  };
+
+  const flightType = getFlightType();
+
   if (trackOrderQuery.isPending) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 bg-slate-50/30">
@@ -120,10 +167,6 @@ export const FlightTracker: React.FC = () => {
     );
   }
 
-
-
-
-
   const renderDisplayValue = (val: any) => {
     if (typeof val === 'string' && (val.startsWith('http') || val.startsWith('data:image/'))) {
       return <img src={val} alt="display value" className="max-h-12 w-auto object-contain inline-block rounded-md" />;
@@ -132,14 +175,21 @@ export const FlightTracker: React.FC = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-4 sm:p-6 font-inter bg-gray-100">
+    <div className="max-w-2xl mx-auto p-4 sm:p-6 font-inter bg-gray-100 pb-20">
+      {/* Flight Type Header */}
+      <div className="text-center mb-8">
+        <h2 className="text-3xl sm:text-4xl font-black text-red-500 uppercase tracking-tighter italic">
+          {flightType}
+        </h2>
+      </div>
+
       {/* Navigation */}
-      <div className="flex justify-start mb-8">
+      <div className="flex justify-start mb-6">
         <motion.button
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
           whileHover={{ x: -2 }}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-md text-slate-500 text-xs font-medium hover:text-indigo-600 hover:bg-indigo-50 transition-all group"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-md text-slate-500 text-xs font-semibold hover:text-indigo-600 hover:bg-indigo-50 transition-all group"
           onClick={() => navigate("/")}
         >
           <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
@@ -152,131 +202,141 @@ export const FlightTracker: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         className="space-y-6 max-w-3xl mx-auto"
       >
-        <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/40 border border-slate-100 overflow-hidden">
+        <div className="bg-white rounded-3xl shadow-2xl shadow-slate-200/60 border border-slate-100 overflow-hidden">
           {/* Header */}
-          <div className="px-6 py-5 border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center border border-white/10 text-white shadow-sm backdrop-blur-sm">
-                <Activity className="w-5 h-5" />
+          <div className="px-6 py-6 border-b border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center border border-white/10 text-white shadow-inner backdrop-blur-md">
+                <Activity className="w-6 h-6" />
               </div>
               <div>
-                <h1 className="text-base font-bold text-white font-outfit tracking-tight">Tracking Details</h1>
-                <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest leading-none mt-1">
-                  ID: <span className="font-mono text-slate-300">{trackingId}</span>
+                <h1 className="text-lg font-extrabold text-white font-outfit tracking-tight">Tracking Details</h1>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] leading-none mt-1.5">
+                  ID: <span className="font-mono text-indigo-300">{trackingId}</span>
                 </p>
               </div>
             </div>
             {getFieldByRole("status") && (
-              <Badge variant="secondary" className="bg-white/10 text-slate-200 border-white/10 px-3 py-1.5 rounded-lg font-bold text-[10px] tracking-wider uppercase border shadow-sm backdrop-blur-sm">
-                {String(getFieldDisplayValue(getFieldByRole("status")) || "Unknown")}
+              <Badge variant="secondary" className="bg-white/10 text-slate-100 border-white/10 px-4 py-2 rounded-xl font-black text-[10px] tracking-widest uppercase border shadow-lg backdrop-blur-md">
+                {String(getFieldDisplayValue(getFieldByRole("status")) || "CONFIRMED")}
               </Badge>
             )}
           </div>
 
-          <div className="p-6 sm:p-10 space-y-10">
+          <div className="p-6 sm:p-10 space-y-12">
 
-            {/* Route */}
-            {/* Multi-Leg Routes */}
-            <div className="space-y-6">
-              {[1, 2, 3].map((leg) => {
-                const origin = getFieldDisplayValue(getFieldByRole(`origin${leg}`));
-                const destination = getFieldDisplayValue(getFieldByRole(`destination${leg}`));
-                // Display specific time for leg 1, or generally if just "departure_time" exists
-                const timeDep = leg === 1 ? getFieldDisplayValue(getFieldByRole("departure_time")) : null;
-                const dateDep = leg === 1 ? getFieldDisplayValue(getFieldByRole("departure_date")) : null;
-                const timeArr = leg === 1 ? getFieldDisplayValue(getFieldByRole("arrival_time")) : null;
-                const dateArr = leg === 1 ? getFieldDisplayValue(getFieldByRole("arrival_date")) : null;
-                const flight = getFieldDisplayValue(getFieldByRole("flight"));
+            {/* Main Segment Card (Leg 1) */}
+            {itinerary.length > 0 && (
+              <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-8 border border-white/10 relative overflow-hidden shadow-2xl shadow-indigo-950/20 group">
+                {/* Leg Label */}
+                <div className="absolute top-0 right-0 px-4 py-1.5 bg-white/10 text-[10px] font-black text-slate-200 uppercase rounded-bl-2xl tracking-widest backdrop-blur-md border-l border-b border-white/10">
+                  LEG 1
+                </div>
 
-                if (!origin || !destination) return null;
+                <div className="flex flex-col md:flex-row items-center justify-between gap-12 py-4 relative z-10">
+                  <div className="text-center md:text-left space-y-2 min-w-[140px]">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest font-outfit opacity-80">Origin</p>
+                    <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tighter font-outfit uppercase leading-tight">
+                      {itinerary[0].origin}
+                    </h2>
+                    {itinerary[0].departureTime && (
+                      <p className="text-sm font-bold text-indigo-300 font-mono tracking-tight">
+                        {itinerary[0].departureTime}
+                      </p>
+                    )}
+                  </div>
 
-                const renderDateTime = (date: any, time: any) => {
-                  if (!date && !time) return null;
-                  if (date && time) return `${date} • ${time}`;
-                  return date || time;
-                };
+                  <div className="flex-1 w-full flex flex-col items-center gap-4">
+                    <div className="relative w-full max-w-[240px]">
+                      <div className="w-full h-[3px] bg-white/10 relative rounded-full overflow-hidden">
+                        <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-transparent via-indigo-400 to-transparent w-full animate-[shimmer_3s_infinite]"></div>
+                      </div>
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-950 p-2.5 rounded-full border border-indigo-500/50 shadow-xl shadow-indigo-500/20 group-hover:scale-110 transition-transform duration-500">
+                        <Plane className="w-5 h-5 text-indigo-400 transform rotate-90" />
+                      </div>
+                    </div>
+                    <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-black text-indigo-200 uppercase tracking-[0.2em] flex items-center justify-center backdrop-blur-sm">
+                      {itinerary[0].flight || "IN TRANSIT"}
+                    </div>
+                  </div>
 
+                  <div className="text-center md:text-right space-y-2 min-w-[140px]">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest font-outfit opacity-80">Destination</p>
+                    <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tighter font-outfit uppercase leading-tight">
+                      {itinerary[0].destination}
+                    </h2>
+                    {itinerary[0].arrivalTime && (
+                      <p className="text-sm font-bold text-indigo-300 font-mono tracking-tight">
+                        {itinerary[0].arrivalTime}
+                      </p>
+                    )}
+                  </div>
+                </div>
 
+                {/* Decorative Elements */}
+                <div className="absolute -bottom-12 -left-12 w-32 h-32 bg-indigo-600/10 rounded-full blur-3xl"></div>
+                <div className="absolute -top-12 -right-12 w-32 h-32 bg-blue-600/10 rounded-full blur-3xl"></div>
+              </div>
+            )}
+
+            {/* Data Fields Table */}
+            <div className="space-y-1">
+              {[
+                { role: "name", label: "Passenger Name" },
+                { role: "date", label: "Booking Date" },
+                { role: "booking_reference", label: "Booking Reference" },
+                { role: "flight", label: "Flight Number" },
+                { role: "email", label: "Email" },
+              ].map((item, idx) => {
+                const field = getFieldByRole(item.role === 'booking_reference' ? 'tracking_id' : item.role);
+                let value = getFieldDisplayValue(field);
+                if (item.role === 'booking_reference' && !value) value = trackingId;
+                if (!value) return null;
 
                 return (
-                  <div key={leg} className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-xl p-6 border border-white/10 relative overflow-hidden shadow-lg shadow-slate-900/20">
-                    {/* Leg Label */}
-                    <div className="absolute top-0 right-0 px-3 py-1 bg-white/10 text-[10px] font-bold text-slate-300 uppercase rounded-bl-xl tracking-wider backdrop-blur-sm border-l border-b border-white/5">
-                      Leg {leg}
-                    </div>
-
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-8 py-2">
-                      <div className="text-center md:text-left space-y-1 min-w-[120px]">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-outfit">Origin</p>
-                        <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight font-outfit uppercase">{renderDisplayValue(origin)}</h2>
-                        {(timeDep || dateDep) && (
-                          <div className="text-sm font-medium text-slate-300 mt-1">
-                            {renderDateTime(dateDep, timeDep)}
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex-1 w-full flex flex-col items-center gap-2">
-                        <div className="relative w-full max-w-[200px]">
-                          <div className="w-full h-[2px] bg-indigo-500/30 relative rounded-full overflow-hidden">
-                            <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-white/0 via-indigo-400 to-white/0 w-1/2 animate-[shimmer_2s_infinite]"></div>
-                          </div>
-                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-900 p-1.5 rounded-full border border-indigo-500/30">
-                            <Plane className="w-4 h-4 text-indigo-400 transform rotate-90" />
-                          </div>
-                        </div>
-                        <div className="px-2 py-0.5 rounded text-[10px] font-bold text-indigo-300 uppercase tracking-widest flex items-center justify-center">
-                          {renderDisplayValue(flight) || "In Transit"}
-                        </div>
-                      </div>
-
-                      <div className="text-center md:text-right space-y-1 min-w-[120px]">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-outfit">Destination</p>
-                        <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight font-outfit uppercase">{renderDisplayValue(destination)}</h2>
-                        {(timeArr || dateArr) && (
-                          <div className="text-sm font-medium text-slate-300 mt-1">
-                            {renderDateTime(dateArr, timeArr)}
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                  <div key={idx} className="flex items-center justify-between py-5 border-b border-slate-100 last:border-0 hover:bg-slate-50/50 transition-colors px-2 gap-4 group">
+                    <span className="text-[11px] font-black uppercase tracking-widest text-slate-400 group-hover:text-slate-500 transition-colors">{item.label}</span>
+                    <span className="font-extrabold text-slate-900 text-sm text-right uppercase tracking-tight">{renderDisplayValue(value)}</span>
                   </div>
                 );
               })}
             </div>
 
-            {/* Fields List */}
-            <div className="flex flex-col border-t border-slate-200 mt-6">
-              {[
-                { role: "name", label: "Passenger Name", colSpan: "col-span-2 md:col-span-1" },
-                { role: "date", label: "Booking Date", colSpan: "col-span-2 md:col-span-1" },
-                { role: "airline", label: "Airline", colSpan: "col-span-2 md:col-span-1" },
-                { role: "flight", label: "Flight Number", colSpan: "col-span-2 md:col-span-1" },
-                { role: "departure_date", label: "Departure Date", colSpan: "col-span-2 md:col-span-1" },
-                { role: "departure_time", label: "Departure Time", colSpan: "col-span-2 md:col-span-1" },
-                { role: "arrival_date", label: "Arrival Date", colSpan: "col-span-2 md:col-span-1" },
-                { role: "arrival_time", label: "Arrival Time", colSpan: "col-span-2 md:col-span-1" },
-                { role: "gate", label: "Gate", colSpan: "col-span-1" },
-                { role: "seat", label: "Seat", colSpan: "col-span-1" },
-                { role: "class", label: "Class", colSpan: "col-span-2 md:col-span-1" },
-                { role: "email", label: "Email", colSpan: "col-span-2" },
-              ].map(item => {
-                const field = getFieldByRole(item.role);
-                if (!field) return null;
-                const value = getFieldDisplayValue(field);
-                if (!value) return null;
+            {/* Itinerary List */}
+            <div className="space-y-6 pt-4 border-t border-slate-100">
+               <div className="text-xs font-black text-slate-400 uppercase tracking-[0.3em] mb-8">Itinerary Segments</div>
+               
+               {itinerary.map((leg, idx) => (
+                 <div key={idx} className="space-y-8 mb-12 last:mb-0">
+                    {/* Departure Segment */}
+                    <div className="flex justify-between items-start group">
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">DEPARTURE</p>
+                        <h3 className="text-2xl font-black text-slate-900 uppercase font-outfit tracking-tighter leading-none group-hover:text-indigo-600 transition-colors">
+                          {leg.origin}
+                        </h3>
+                      </div>
+                      <div className="text-right space-y-1">
+                        <p className="text-sm font-black text-slate-400 uppercase tracking-tight">{leg.departureDate || "---"}</p>
+                        <p className="text-2xl font-black text-slate-900 font-mono tabular-nums leading-none italic">{leg.departureTime || "--:--"}</p>
+                      </div>
+                    </div>
 
-                return (
-                  <div key={item.role} className="flex items-center justify-between py-4 border-b border-slate-200 last:border-0 hover:bg-slate-50/50 transition-colors px-2 gap-4">
-                    <div className="flex items-center text-slate-500">
-                      <span className="text-[11px] font-bold uppercase tracking-widest font-outfit">{item.label}</span>
+                    {/* Arrival Segment */}
+                    <div className="flex justify-between items-start group">
+                      <div className="space-y-2 pl-4 border-l-2 border-slate-100">
+                        <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">ARRIVAL</p>
+                        <h3 className="text-2xl font-black text-slate-900 uppercase font-outfit tracking-tighter leading-none group-hover:text-emerald-600 transition-colors">
+                          {leg.destination}
+                        </h3>
+                      </div>
+                      <div className="text-right space-y-1">
+                        <p className="text-sm font-black text-slate-400 uppercase tracking-tight">{leg.arrivalDate || "---"}</p>
+                        <p className="text-2xl font-black text-slate-900 font-mono tabular-nums leading-none italic">{leg.arrivalTime || "--:--"}</p>
+                      </div>
                     </div>
-                    <div className="font-bold text-slate-900 text-sm break-words text-right flex justify-end">
-                      {renderDisplayValue(value)}
-                    </div>
-                  </div>
-                );
-              })}
+                 </div>
+               ))}
             </div>
 
 
