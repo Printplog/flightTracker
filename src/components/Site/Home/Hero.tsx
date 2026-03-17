@@ -1,89 +1,48 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import SectionPadding from '../../../layouts/SectionPadding';
 import { useNavigate } from 'react-router-dom';
-import SlideShow from './SlideShow';
-
-// Infinite typewriter hook for multiple lines
-function useInfiniteTypewriter(lines: string[], speed = 45, pause = 1200) {
-  const [displayed, setDisplayed] = useState<string[]>(lines.map(() => ''));
-  const [lineIdx, setLineIdx] = useState(0);
-  const [charIdx, setCharIdx] = useState(0);
-
-  useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    if (lineIdx < lines.length) {
-      if (charIdx < lines[lineIdx].length) {
-        timeout = setTimeout(() => {
-          setDisplayed((prev) => {
-            const copy = [...prev];
-            copy[lineIdx] += lines[lineIdx][charIdx];
-            return copy;
-          });
-          setCharIdx((i) => i + 1);
-        }, speed);
-      } else {
-        // Pause before next line
-        timeout = setTimeout(() => {
-          setLineIdx((i) => i + 1);
-          setCharIdx(0);
-        }, 400);
-      }
-    } else {
-      // Pause before restarting
-      timeout = setTimeout(() => {
-        setDisplayed(lines.map(() => ''));
-        setLineIdx(0);
-        setCharIdx(0);
-      }, pause);
-    }
-    return () => clearTimeout(timeout);
-  }, [lines, lineIdx, charIdx, speed, pause]);
-
-  return displayed;
-}
 
 export default function Hero() {
   const [trackingCode, setTrackingCode] = useState('');
   const navigate = useNavigate();
 
-  // Both lines typewritten, infinite
-  const lines = ['TRACK ANY FLIGHT, ANYWHERE IN THE WORLD', 'REAL-TIME GLOBAL FLIGHT TRACKING'];
-  const [typedMain] = useInfiniteTypewriter(lines, 38, 1200);
-
   return (
-    <SectionPadding className="relative bg-gradient-to-b from-primary/50 to-transparent flex flex-col-reverse lg:flex-row gap-20 items-center justify-between py-10 sm:py-20 min-h-[450px] md:min-h-[600px] overflow-hidden">
-     
-      {/* Left Content */}
-      <div className="relative flex-1 flex  w-full  mt-8 md:mt-0">
-        <div className="w-full flex flex-col items-start">
-          <div className="relative mb-6">
-            <h1 className="text-5xl font-bold text-foreground/80 leading-tight text-left min-h-[180px]">
-              <span>{typedMain}</span>
-              <br />
-            </h1>
-          </div>
-          {/* Tracking Form */}
-          <div className="flex flex-col border sm:flex-row gap-3 w-full sm:w-[80%] mx-auto md:mx-0 p-4 sm:p-5 bg-white rounded-lg shadow-md">
+    <div className="relative w-full h-[500px] sm:h-[500px] lg:h-[450px] flex items-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      {/* Content */}
+      <SectionPadding className="relative z-10 w-full max-w-5xl mx-auto px-4">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-4 leading-tight font-['Plus_Jakarta_Sans']">
+            Track Any Flight
+            <br />
+            <span className="text-primary">Anywhere in the World</span>
+          </h1>
+          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+            Real-time flight tracking with instant updates
+          </p>
+        </div>
+
+        {/* Search Box */}
+        <div className="w-full max-w-2xl mx-auto">
+          <div className="flex flex-col sm:flex-row gap-2 p-2 bg-white rounded-xl shadow-lg">
             <input
               type="text"
               value={trackingCode}
               onChange={(e) => setTrackingCode(e.target.value)}
-              placeholder="Enter booking reference or flight number..."
-              className="flex-1 px-4 py-3 text-gray-900 bg-white border border-gray-200 rounded-md sm:rounded-r-none sm:rounded-l-md focus:outline-none focus:ring-2 focus:ring-primary/30 placeholder-gray-500"
+              placeholder="Enter booking reference or flight number"
+              className="flex-1 px-4 py-3 text-gray-900 rounded-lg focus:outline-none placeholder-gray-400 border-0 ring-0 focus:ring-0"
             />
             <button
               onClick={() => navigate(`/?trackingId=${trackingCode}`)}
-              className="bg-primary hover:bg-primary/90 text-white px-6 py-3 font-semibold rounded-md sm:rounded-l-none sm:rounded-r-md transition-colors whitespace-nowrap"
+              className="bg-primary hover:bg-primary/90 text-white px-6 py-3 font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 border-0"
             >
-              Check Booking
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              Track
             </button>
           </div>
         </div>
-      </div>
-      {/* Right Image - Interactive World Map */}
-      <SlideShow />
-      {/* Overlay */}
-      {/* <div className="absolute inset-0 bg-primary/20 pointer-events-none" /> */}
-    </SectionPadding>
+      </SectionPadding>
+    </div>
   );
 }

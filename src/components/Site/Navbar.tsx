@@ -36,11 +36,11 @@ export default function Navbar() {
   return (
     <nav className="border-b relative backdrop-blur supports-[backdrop-filter]:bg-background/60 z-[99999]">
       <SectionPadding className="flex justify-between items-center py-4 lg:py-6 sticky top-0">
-        {/* Logo */}
-        <div className="flex items-center gap-2">
+        {/* Logo - Clickable to Home */}
+        <a href="/" onClick={e => handleSmoothScroll(e, '/')} className="flex items-center gap-2">
           {/* <img src="/logo.png" alt="" className='size-[30px]' /> */}
-          <span className="font-bold text-xl text-foreground">MyFlightLookup</span>  
-        </div>
+          <span className="font-bold text-xl text-foreground">MyFlightLookup</span>
+        </a>
 
         {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center space-x-8">
