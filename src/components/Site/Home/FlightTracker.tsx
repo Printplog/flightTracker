@@ -69,54 +69,95 @@ export const FlightTracker: React.FC = () => {
     return rawValue;
   };
 
-  // EXTRACT DYNAMIC ITINERARY (LEG-BASED)
+  // EXTRACT DYNAMIC ITINERARY WITH LABELS FROM TRACKING KEYWORDS
   const getItinerary = () => {
     const legs: any[] = [];
     let i = 1;
     while (true) {
-      const origin = getFieldDisplayValue(getFieldByRole(`origin${i}`));
-      const destination = getFieldDisplayValue(getFieldByRole(`destination${i}`));
+      const legPrefix = `leg${i}_`;
+      const trackLegPrefix = `track_leg${i}_`;
 
-      if (!origin && !destination) break;
+      const legFields = fields.filter(f =>
+        f.trackingRole && (f.trackingRole.startsWith(legPrefix) || f.trackingRole.startsWith(trackLegPrefix))
+      );
 
-      // Get datetime fields (combined date+time in one field)
-      const departureDatetime = String(getFieldDisplayValue(getFieldByRole(`origin${i}_departure_datetime`)) || getFieldDisplayValue(getFieldByRole(`origin${i}_departure_date`)) || '');
-      const arrivalDatetime = String(getFieldDisplayValue(getFieldByRole(`destination${i}_arrival_datetime`)) || getFieldDisplayValue(getFieldByRole(`destination${i}_arrival_date`)) || '');
+      if (legFields.length === 0) break;
 
-      // Try to separate date and time if they're combined (e.g., "1 Sep 2024, 14:10pm")
-      const parseDatetime = (datetimeStr: string | undefined | null) => {
-        if (!datetimeStr) return { date: '', time: '' };
-        const str = String(datetimeStr);
-        // Check for pattern like "1 Sep 2024, 14:10pm" or "Jan 10, 2024 14:30"
-        const match = str.match(/^(.+?),\s*(.+)$/);
-        if (match) {
-          return { date: match[1].trim(), time: match[2].trim() };
+      const locationsMap: Map<string, any> = new Map();
+
+      legFields.forEach(field => {
+        const role = field.trackingRole!;
+        const value = getFieldDisplayValue(field);
+        if (!value) return;
+
+        // Strictly only include fields that are origin, destination, or stopover
+        const isLocation = role.includes('origin') || role.includes('destination') || role.includes('stopover');
+        if (!isLocation) return;
+
+        const isDatetime = role.endsWith('_datetime');
+        const baseRole = isDatetime ? role.replace(/_(departure_datetime|arrival_datetime|datetime)$/, '') : role;
+
+        if (!locationsMap.has(baseRole)) {
+          locationsMap.set(baseRole, { role: baseRole, location: '', date: '', time: '', type: '' });
         }
-        // If no comma, return full string as date
-        return { date: str, time: '' };
-      };
 
-      const departureParsed = parseDatetime(departureDatetime);
-      const arrivalParsed = parseDatetime(arrivalDatetime);
+        const entry = locationsMap.get(baseRole);
 
-      const depDate = departureParsed.date || String(getFieldDisplayValue(getFieldByRole("departure_date")) || '');
-      const depTime = departureParsed.time || String(getFieldDisplayValue(getFieldByRole("departure_time")) || '');
-      const arrDate = arrivalParsed.date || String(getFieldDisplayValue(getFieldByRole("arrival_date")) || '');
-      const arrTime = arrivalParsed.time || String(getFieldDisplayValue(getFieldByRole("arrival_time")) || '');
-
-      legs.push({
-        index: i,
-        origin,
-        destination,
-        departureDate: depDate,
-        departureTime: depTime,
-        arrivalDate: arrDate,
-        arrivalTime: arrTime,
-        flight: getFieldDisplayValue(getFieldByRole(`flight${i}`)) || getFieldDisplayValue(getFieldByRole("flight"))
+        if (isDatetime) {
+          const parsed = parseDatetime(String(value));
+          entry.date = parsed.date;
+          entry.time = parsed.time;
+        } else {
+          entry.location = String(value);
+          if (role.includes('origin')) entry.type = 'departure';
+          else if (role.includes('destination')) entry.type = 'arrival';
+          else if (role.includes('stopover')) entry.type = 'stopover';
+          
+          console.log(`[FlightTracker] Extracted point: role=${role}, type=${entry.type}, location=${entry.location}`);
+        }
       });
-      i++;
+
+      const locations = Array.from(locationsMap.values())
+        .filter(loc => loc.location)
+        .sort((a, b) => {
+          if (a.type === 'departure') return -1;
+          if (b.type === 'departure') return 1;
+          if (a.type === 'arrival') return 1;
+          if (b.type === 'arrival') return -1;
+
+          const aIdx = parseInt(a.role.match(/stopover(\d+)/)?.[1] || '0');
+          const bIdx = parseInt(b.role.match(/stopover(\d+)/)?.[1] || '0');
+          return aIdx - bIdx;
+        });
+
+      if (locations.length > 0) {
+        const flightRole = `leg${i}_flight_no`;
+        const flight = getFieldDisplayValue(getFieldByRole(flightRole)) ||
+          getFieldDisplayValue(getFieldByRole(`flight${i}`)) ||
+          getFieldDisplayValue(getFieldByRole("flight"));
+
+        legs.push({
+          index: i,
+          flight,
+          locations
+        });
+      }
+    i++;
+      if (i > 10) break;
     }
+
+
     return legs;
+  };
+
+  const parseDatetime = (datetimeStr: string | undefined | null) => {
+    if (!datetimeStr) return { date: '', time: '' };
+    const str = String(datetimeStr);
+    const match = str.match(/^(.+?),\s*(.+)$/);
+    if (match) {
+      return { date: match[1].trim(), time: match[2].trim() };
+    }
+    return { date: str, time: '' };
   };
 
   const itinerary = getItinerary();
@@ -228,23 +269,23 @@ export const FlightTracker: React.FC = () => {
 
             <div className="p-5 sm:p-6 space-y-6">
 
-              {/* Main Segment Card (Leg 1) - Compact */}
+              {/* Main Segment Card (Route Summary) - Shows All Locations */}
               {itinerary.length > 0 && (
                 <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-5 border border-white/10 relative overflow-hidden shadow-lg shadow-indigo-950/20">
-                  {/* Leg Label */}
+                  {/* Route Label */}
                   <div className="absolute top-0 right-0 px-3 py-1 bg-white/10 text-[9px] font-bold text-slate-200 uppercase rounded-bl-xl tracking-wide backdrop-blur-md border-l border-b border-white/10">
-                    Leg 1
+                    Route Summary
                   </div>
 
                   <div className="flex flex-col md:flex-row items-center justify-between gap-8 py-3 relative z-10">
                     <div className="text-center md:text-left space-y-1 min-w-[120px]">
-                      <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wide">Origin</p>
+                      <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wide">Starting Point</p>
                       <h2 className="text-lg font-bold text-white tracking-tight leading-tight">
-                        {itinerary[0].origin}
+                        {itinerary[0]?.locations?.[0]?.location || '---'}
                       </h2>
-                      {itinerary[0].departureTime && (
+                      {itinerary[0]?.locations?.[0]?.time && (
                         <p className="text-xs font-bold text-indigo-300 font-mono">
-                          {itinerary[0].departureTime}
+                          {itinerary[0].locations[0].time}
                         </p>
                       )}
                     </div>
@@ -259,18 +300,18 @@ export const FlightTracker: React.FC = () => {
                         </div>
                       </div>
                       <div className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[9px] font-bold text-indigo-200 uppercase tracking-wide flex items-center justify-center backdrop-blur-sm">
-                        {itinerary[0].flight || "In Transit"}
+                        {itinerary.length} Leg{itinerary.length > 1 ? 's' : ''}
                       </div>
                     </div>
 
                     <div className="text-center md:text-right space-y-1 min-w-[120px]">
-                      <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wide">Destination</p>
+                      <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wide">Final Destination</p>
                       <h2 className="text-lg font-bold text-white tracking-tight leading-tight">
-                        {itinerary[0].destination}
+                        {itinerary[itinerary.length - 1]?.locations?.[itinerary[itinerary.length - 1].locations.length - 1]?.location || '---'}
                       </h2>
-                      {itinerary[0].arrivalTime && (
+                      {itinerary[itinerary.length - 1]?.locations?.[itinerary[itinerary.length - 1].locations.length - 1]?.time && (
                         <p className="text-xs font-bold text-indigo-300 font-mono">
-                          {itinerary[0].arrivalTime}
+                          {itinerary[itinerary.length - 1].locations[itinerary[itinerary.length - 1].locations.length - 1].time}
                         </p>
                       )}
                     </div>
@@ -305,13 +346,13 @@ export const FlightTracker: React.FC = () => {
                 })}
               </div>
 
-              {/* Itinerary List - Compact Design */}
+              {/* Itinerary List - Dynamic Location Display */}
               <div className="pt-4 border-t border-slate-100">
                 <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Itinerary</div>
 
                 {itinerary.map((leg, idx) => (
                   <div key={idx} className="mb-6 last:mb-0">
-                    {/* Compact Leg Card */}
+                    {/* Leg Card */}
                     <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
                       {/* Leg Header */}
                       <div className="flex items-center justify-between mb-3 pb-3 border-b border-slate-200">
@@ -323,29 +364,38 @@ export const FlightTracker: React.FC = () => {
                         )}
                       </div>
 
-                      {/* Departure & Arrival Row */}
-                      <div className="grid grid-cols-2 gap-4">
-                        {/* Departure */}
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-1.5">
-                            <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
-                            <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-wide">From</span>
-                          </div>
-                          <p className="text-sm font-bold text-slate-900 leading-tight">{leg.origin}</p>
-                          <p className="text-xs text-slate-500 font-medium">{leg.departureDate || "---"}</p>
-                          <p className="text-sm font-bold text-slate-700 font-mono">{leg.departureTime || "--:--"}</p>
-                        </div>
+                      {/* Horizontal Dynamic Locations */}
+                      <div className="flex flex-col sm:flex-row items-start justify-between gap-8 relative mt-2">
+                        {/* Connecting Line (Desktop) */}
+                        <div className="absolute top-[7px] left-3 right-3 h-[1px] border-t-2 border-dashed border-slate-200 hidden sm:block -z-0"></div>
 
-                        {/* Arrival */}
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-1.5">
-                            <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                            <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wide">To</span>
+                        {leg.locations.map((loc: any, locIdx: number) => (
+                          <div key={locIdx} className="relative z-10 flex-1 min-w-[120px]">
+                            <div className="flex items-center gap-2 mb-2">
+                              <div className={`w-3 h-3 rounded-full border-2 border-white shadow-sm shrink-0 ${
+                                loc.type === 'departure' ? 'bg-indigo-500' :
+                                loc.type === 'arrival' ? 'bg-emerald-500' :
+                                'bg-amber-500'
+                              }`}></div>
+                              <span className={`text-xs font-bold uppercase tracking-wider ${
+                                loc.type === 'departure' ? 'text-indigo-600' :
+                                loc.type === 'arrival' ? 'text-emerald-600' :
+                                'text-amber-600'
+                              }`}>
+                                {loc.type === 'departure' ? 'Departure' :
+                                 loc.type === 'arrival' ? 'Arrival' :
+                                 'Stopover'}
+                              </span>
+                            </div>
+                            <div className="pl-5 sm:pl-0 space-y-1">
+                              <p className="text-sm font-bold text-slate-900 leading-snug line-clamp-2 min-h-[2.5rem]">{loc.location}</p>
+                              <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3 text-xs">
+                                <span className="text-slate-500 font-medium whitespace-nowrap">{loc.date || "---"}</span>
+                                <span className="font-bold text-slate-700 font-mono whitespace-nowrap">{loc.time || "--:--"}</span>
+                              </div>
+                            </div>
                           </div>
-                          <p className="text-sm font-bold text-slate-900 leading-tight">{leg.destination}</p>
-                          <p className="text-xs text-slate-500 font-medium">{leg.arrivalDate || "---"}</p>
-                          <p className="text-sm font-bold text-slate-700 font-mono">{leg.arrivalTime || "--:--"}</p>
-                        </div>
+                        ))}
                       </div>
                     </div>
                   </div>
