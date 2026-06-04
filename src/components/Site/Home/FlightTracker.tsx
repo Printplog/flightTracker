@@ -151,13 +151,16 @@ export const FlightTracker: React.FC = () => {
   };
 
   const parseDatetime = (datetimeStr: string | undefined | null) => {
+    // Treat placeholder-only values (e.g. "--:--", "--/--/----", "---") as empty,
+    // so missing dates/times render nothing instead of a dash placeholder.
+    const clean = (v: string) => (/[a-zA-Z0-9]/.test(v) ? v.trim() : '');
     if (!datetimeStr) return { date: '', time: '' };
     const str = String(datetimeStr);
     const match = str.match(/^(.+?),\s*(.+)$/);
     if (match) {
-      return { date: match[1].trim(), time: match[2].trim() };
+      return { date: clean(match[1]), time: clean(match[2]) };
     }
-    return { date: str, time: '' };
+    return { date: clean(str), time: '' };
   };
 
   const itinerary = getItinerary();
