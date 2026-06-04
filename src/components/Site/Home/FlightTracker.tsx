@@ -276,7 +276,7 @@ export const FlightTracker: React.FC = () => {
               {itinerary.length > 0 && (
                 <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-5 border border-white/10 relative overflow-hidden shadow-lg shadow-indigo-950/20">
                   {/* Route Label */}
-                  <div className="absolute top-0 right-0 px-3 py-1 bg-white/10 text-[9px] font-bold text-slate-200 uppercase rounded-bl-xl tracking-wide backdrop-blur-md border-l border-b border-white/10">
+                  <div className="absolute top-0 right-0 px-3 py-1 bg-white/10 text-[9px] font-bold text-slate-200 uppercase rounded-bl-xl rounded-tr-2xl tracking-wide backdrop-blur-md border-l border-b border-white/10">
                     Route Summary
                   </div>
 
