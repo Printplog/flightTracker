@@ -389,10 +389,16 @@ export const FlightTracker: React.FC = () => {
                             </div>
                             <div className="pl-5 sm:pl-0 space-y-1">
                               <p className="text-sm font-bold text-slate-900 leading-snug line-clamp-2 min-h-[2.5rem]">{loc.location}</p>
-                              <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3 text-xs">
-                                <span className="text-slate-500 font-medium whitespace-nowrap">{loc.date || "---"}</span>
-                                <span className="font-bold text-slate-700 font-mono whitespace-nowrap">{loc.time || "--:--"}</span>
-                              </div>
+                              {(loc.date || loc.time) && (
+                                <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3 text-xs">
+                                  {loc.date && (
+                                    <span className="text-slate-500 font-medium whitespace-nowrap">{loc.date}</span>
+                                  )}
+                                  {loc.time && (
+                                    <span className="font-bold text-slate-700 font-mono whitespace-nowrap">{loc.time}</span>
+                                  )}
+                                </div>
+                              )}
                             </div>
                           </div>
                         ))}
