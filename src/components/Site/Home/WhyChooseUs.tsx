@@ -32,13 +32,13 @@ export default function WhyChooseUsSection(): React.JSX.Element {
   ];
 
   return (
-    <SectionPadding className="bg-white py-16">
+    <SectionPadding className="bg-white py-16 max-w-7xl mx-auto w-full">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12">
         {/* Left: Text and Features */}
         <div className="w-full md:w-1/2">
           {/* Header */}
           <div className="mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-black mb-3 leading-snug tracking-tight">
+            <h2 className="text-2xl md:text-3xl font-bold text-black mb-3 leading-snug tracking-tight font-title">
               WHY CHOOSE US
             </h2>
             <h3 className="text-lg md:text-2xl font-bold text-[#6C63FF] mb-4 uppercase">

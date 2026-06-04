@@ -7,23 +7,30 @@ export default function Hero() {
   const navigate = useNavigate();
 
   return (
-    <div className="relative w-full h-[500px] sm:h-[500px] lg:h-[450px] flex items-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="relative w-full h-[500px] sm:h-[500px] lg:h-[450px] flex items-center overflow-hidden bg-gradient-to-b from-[#faf9f6] via-[#f5f4ef] to-[#eceae3]">
       {/* Content */}
       <SectionPadding className="relative z-10 w-full max-w-5xl mx-auto px-4">
         <div className="text-center mb-8">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-4 leading-tight font-['Plus_Jakarta_Sans']">
+          <div className="inline-flex items-center gap-2 mb-5 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold uppercase tracking-wider">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary"></span>
+            </span>
+            Real-time global tracking
+          </div>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 mb-4 leading-tight font-title">
             Track Any Flight
             <br />
             <span className="text-primary">Anywhere in the World</span>
           </h1>
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
             Real-time flight tracking with instant updates
           </p>
         </div>
 
         {/* Search Box */}
         <div className="w-full max-w-2xl mx-auto">
-          <div className="flex flex-col sm:flex-row gap-2 p-2 bg-white rounded-xl shadow-lg">
+          <div className="flex flex-col sm:flex-row gap-2 p-2 bg-white rounded-xl shadow-xl shadow-slate-300/40 border border-slate-200">
             <input
               type="text"
               value={trackingCode}

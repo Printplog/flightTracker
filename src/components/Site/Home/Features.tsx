@@ -21,7 +21,7 @@ const features = [
 
 export default function FeaturesSection() {
   return (
-    <SectionPadding className="features-section mt-[120px] py-15">
+    <SectionPadding className="features-section mt-[120px] py-15 max-w-7xl mx-auto w-full">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {features.map((feature, index) => (
           <div key={index} className="feature-item text-center">

@@ -58,11 +58,11 @@ const icons = [
 
 export default function FAQSection(): React.JSX.Element {
   return (
-    <SectionPadding className="bg-white py-20 px-4 border-b">
+    <SectionPadding className="bg-white py-20 px-4 border-b max-w-7xl mx-auto w-full">
       <div>
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-2xl md:text-3xl font-bold text-primary mb-6 tracking-wide">
+          <h2 className="text-2xl md:text-3xl font-bold text-primary mb-6 tracking-wide font-title">
             Frequently Asked Questions
           </h2>
           <div className="w-24 h-1 bg-primary mx-auto mb-6"></div>

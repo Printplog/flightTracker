@@ -41,14 +41,14 @@ export default function ContactPage() {
   };
 
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-primary/5 via-background to-background py-20 px-4">
+    <section className="relative min-h-screen bg-gradient-to-br from-primary/5 via-background to-background py-20 px-4 max-w-7xl mx-auto w-full">
       <div className="relative z-10 max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-14">
           <span className="inline-block bg-primary/10 text-primary font-semibold px-4 py-1 rounded-full uppercase tracking-widest text-xs mb-4">
             Contact
           </span>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-foreground mb-4 tracking-tight">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-foreground mb-4 tracking-tight font-title">
             Get in Touch
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">

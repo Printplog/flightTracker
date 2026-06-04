@@ -88,7 +88,7 @@ export default function PopularFlights() {
   const columns = chunkArray(flights, Math.ceil(flights.length / 3));
 
   return (
-    <SectionPadding className="bg-muted/40 rounded-2xl p-6 py-10 mt-10 ">
+    <SectionPadding className="bg-muted/40 rounded-2xl p-6 py-10 mt-10 max-w-7xl mx-auto w-full">
       <h3 className="text-sm font-semibold text-muted-foreground mb-3">
         Popular flights
       </h3>

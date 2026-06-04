@@ -32,7 +32,7 @@ export default function HowItWorksSection(): React.JSX.Element {
   ];
 
   return (
-    <SectionPadding className="relative py-24 bg-gradient-to-br from-primary/5 via-background to-background overflow-hidden">
+    <SectionPadding className="relative py-24 bg-gradient-to-br from-primary/5 via-background to-background overflow-hidden max-w-7xl mx-auto w-full">
       {/* Decorative background shapes */}
       <div className="absolute -top-32 -left-32 w-[400px] h-[400px] bg-primary/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-32 -right-32 w-[400px] h-[400px] bg-secondary/10 rounded-full blur-3xl pointer-events-none" />
@@ -43,7 +43,7 @@ export default function HowItWorksSection(): React.JSX.Element {
           <span className="inline-block bg-primary/10 text-primary font-semibold px-4 py-1 rounded-full uppercase tracking-widest text-xs mb-4">
             How It Works
           </span>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-foreground mb-4 tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-foreground mb-4 tracking-tight font-title">
             Track Your Flight in 3 Simple Steps
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">

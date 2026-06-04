@@ -97,7 +97,7 @@ export default function PricingSection(): React.JSX.Element {
           <span className="inline-block bg-primary/10 text-primary font-semibold px-4 py-1 rounded-full uppercase tracking-widest text-xs mb-4">
             Pricing
           </span>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-foreground mb-4 tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-foreground mb-4 tracking-tight font-title">
             Simple, Transparent Pricing
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">

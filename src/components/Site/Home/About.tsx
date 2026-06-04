@@ -2,7 +2,7 @@ import SectionPadding from "../../../layouts/SectionPadding";
 
 export default function AboutSection() {
   return (
-    <SectionPadding className="py-20 bg-background">
+    <SectionPadding className="py-20 bg-background max-w-7xl mx-auto w-full">
       <div className="max-w-5xl mx-auto flex flex-col items-center">
         {/* Top Badge */}
         <div className="flex items-center gap-3 mb-6">
@@ -15,11 +15,11 @@ export default function AboutSection() {
         {/* Main Card */}
         <div className="w-full bg-card rounded-3xl shadow-xl flex flex-col md:flex-row overflow-hidden">
           {/* Left: Image with overlay and badge */}
-          <div className="relative md:w-1/2 min-h-[320px]">
+          <div className="relative md:w-1/2 min-h-[320px] max-h-[450px] overflow-hidden">
             <img
               src="/plane.jpg"
               alt="MyFlightLookup operations"
-              className="object-cover w-full h-full min-h-[320px] md:min-h-[400px]"
+              className="object-cover w-full h-full min-h-[320px] md:min-h-[400px] max-h-[450px]"
             />
             {/* Overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-transparent" />
@@ -32,7 +32,7 @@ export default function AboutSection() {
 
           {/* Right: Content */}
           <div className="md:w-1/2 flex flex-col justify-center px-8 py-10 space-y-6">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-foreground mb-2">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-foreground mb-2 font-title">
               Track Any Flight Worldwide, Anytime
             </h2>
             <p className="text-muted-foreground text-base leading-relaxed">

@@ -56,11 +56,11 @@ export default function TeamSection(): React.JSX.Element {
   ];
 
   return (
-    <SectionPadding className="bg-white py-30">
+    <SectionPadding className="bg-white py-30 max-w-7xl mx-auto w-full">
       <div className="">
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-primary mb-4 tracking-wide">
+          <h2 className="text-4xl md:text-5xl font-bold text-primary mb-4 tracking-wide font-title">
             OUR STAFF
           </h2>
           <p className="text-gray-500 text-lg max-w-2xl mx-auto">

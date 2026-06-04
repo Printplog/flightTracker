@@ -35,7 +35,7 @@ export default function Navbar() {
 
   return (
     <nav className="border-b relative backdrop-blur supports-[backdrop-filter]:bg-background/60 z-[99999]">
-      <SectionPadding className="flex justify-between items-center py-4 lg:py-6 sticky top-0">
+      <SectionPadding className="flex justify-between items-center py-4 lg:py-6 sticky top-0 max-w-7xl mx-auto w-full">
         {/* Logo - Clickable to Home */}
         <a href="/" onClick={e => handleSmoothScroll(e, '/')} className="flex items-center gap-2">
           {/* <img src="/logo.png" alt="" className='size-[30px]' /> */}

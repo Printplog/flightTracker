@@ -49,10 +49,10 @@ export default function Services() {
   ];
 
   return (
-    <SectionPadding className="py-16 mt-[100px] max-w-6xl mx-auto w-full">
+    <SectionPadding className="py-16 mt-[100px] max-w-7xl mx-auto w-full">
       {/* Header */}
       <div className="text-center mb-12">
-        <h2 className="text-3xl lg:text-4xl font-semibold text-primary mb-4">
+        <h2 className="text-3xl lg:text-4xl font-semibold text-primary mb-4 font-title">
           WHAT WE OFFER
         </h2>
         <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
