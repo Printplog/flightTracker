@@ -45,7 +45,7 @@ export default function WhyChooseUsSection(): React.JSX.Element {
               Your Global Flight Tracking Expert
             </h3>
             <p className="text-gray-700 text-base leading-relaxed">
-              At MyFlightLookup, we specialize in comprehensive worldwide flight tracking and booking services. Our advanced platform enables you to track any flight from any airline, anywhere in the world, with real-time accuracy and reliability. We're committed to providing seamless global flight monitoring solutions that keep you informed, no matter where your journey takes you.
+              At MyFlightLookup, we specialize in comprehensive worldwide flight tracking. Our advanced platform enables you to track any flight from any airline, anywhere in the world, with real-time accuracy and reliability. We're committed to providing seamless global flight monitoring solutions that keep you informed, no matter where your journey takes you.
             </p>
           </div>
 

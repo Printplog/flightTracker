@@ -26,7 +26,7 @@ export default function AboutSection() {
             {/* Floating stat */}
             <div className="absolute bottom-6 left-6 bg-background/90 px-5 py-3 rounded-xl shadow-lg flex flex-col items-center">
               <span className="text-2xl font-bold text-primary">2M+</span>
-              <span className="text-xs text-muted-foreground">Flights Booked</span>
+              <span className="text-xs text-muted-foreground">Flights Tracked</span>
             </div>
           </div>
 
@@ -36,7 +36,7 @@ export default function AboutSection() {
               Track Any Flight Worldwide, Anytime
             </h2>
             <p className="text-muted-foreground text-base leading-relaxed">
-              MyFlightLookup provides comprehensive global flight tracking and booking services. Track flights from any airline, anywhere in the world, with real-time updates and complete transparency. Whether you're monitoring a domestic route or an international journey spanning multiple continents, we deliver accurate, up-to-the-minute flight information to keep you informed.
+              MyFlightLookup provides comprehensive global flight tracking. Monitor flights from any airline, anywhere in the world, with real-time updates and complete transparency. Whether you're monitoring a domestic route or an international journey spanning multiple continents, we deliver accurate, up-to-the-minute flight information to keep you informed.
             </p>
             <ul className="space-y-2 text-muted-foreground text-base pl-4 list-disc">
               <li>

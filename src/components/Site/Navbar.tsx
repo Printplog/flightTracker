@@ -38,7 +38,7 @@ export default function Navbar() {
       <SectionPadding className="flex justify-between items-center py-4 lg:py-6 sticky top-0 max-w-7xl mx-auto w-full">
         {/* Logo - Clickable to Home */}
         <a href="/" onClick={e => handleSmoothScroll(e, '/')} className="flex items-center gap-2">
-          {/* <img src="/logo.png" alt="" className='size-[30px]' /> */}
+          <img src="/logo.png" alt="MyFlightLookup" className='h-8 w-auto' />
           <span className="font-bold text-xl text-foreground">MyFlightLookup</span>
         </a>
 

@@ -4,8 +4,8 @@ import {
   Globe2,
   CalendarCheck2,
   Headphones,
-  CreditCard,
-  BookOpen,
+  Bell,
+  MapPin,
 } from "lucide-react";
 
 export default function Services() {
@@ -32,19 +32,19 @@ export default function Services() {
       icon: <Headphones className="w-8 h-8 text-primary" />,
       title: "24/7 Global Support",
       description:
-        "Access round-the-clock support from our dedicated team, ready to assist with tracking inquiries, booking questions, or flight information for any destination worldwide. Our experts are available whenever you need help, regardless of your time zone.",
+        "Access round-the-clock support from our dedicated team, ready to assist with tracking inquiries or flight information for any destination worldwide. Our experts are available whenever you need help, regardless of your time zone.",
     },
     {
-      icon: <CreditCard className="w-8 h-8 text-primary" />,
-      title: "Secure Global Booking",
+      icon: <Bell className="w-8 h-8 text-primary" />,
+      title: "Instant Status Alerts",
       description:
-        "Book flights worldwide with confidence using our secure, encrypted payment system. Whether booking domestic or international routes, your financial data and transactions are protected with enterprise-grade security protocols.",
+        "Receive instant push and email notifications the moment a flight status changes — delays, gate switches, diversions, or early arrivals. Stay one step ahead with proactive, real-time alerts for any flight you're monitoring.",
     },
     {
-      icon: <BookOpen className="w-8 h-8 text-primary" />,
-      title: "International Travel Intelligence",
+      icon: <MapPin className="w-8 h-8 text-primary" />,
+      title: "Live Route & Airport Insights",
       description:
-        "Access comprehensive travel intelligence including real-time flight tracking, airport information, airline updates, and destination insights for any location worldwide. Stay informed about travel restrictions, requirements, and flight statuses globally.",
+        "Access detailed route maps, airport layouts, and destination insights for any flight worldwide. Stay informed about flight paths, connecting airports, and real-time runway status, all in one place.",
     },
   ];
 

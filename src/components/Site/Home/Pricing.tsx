@@ -43,9 +43,9 @@ export default function PricingSection(): React.JSX.Element {
       price: 10,
       period: "year",
       features: [
-        "Access to best fare finder",
-        "Email alerts for fare drops",
-        "No booking fees on selected airlines",
+        "Track up to 10 flights per month",
+        "Email alerts for status changes",
+        "Access to worldwide flight data",
         "Standard customer support"
       ],
       gradient: "from-blue-50 via-white to-white",
@@ -58,9 +58,9 @@ export default function PricingSection(): React.JSX.Element {
       price: 50,
       period: "year",
       features: [
-        "Access to all fare finder tools",
-        "Real-time alerts on fare drops",
-        "No booking fees on all airlines",
+        "Unlimited flight tracking",
+        "Real-time push & email alerts",
+        "Advanced route & airport insights",
         "Priority customer support"
       ],
       isPopular: true,
@@ -74,9 +74,9 @@ export default function PricingSection(): React.JSX.Element {
       price: 100,
       period: "year",
       features: [
-        "Exclusive access to unpublished fares",
-        "Frequent flyer perks and bonuses",
-        "No booking fees on all airlines",
+        "Unlimited tracking + team access",
+        "API access for custom integrations",
+        "Historical flight data & analytics",
         "24/7 premium customer support"
       ],
       gradient: "from-yellow-50 via-white to-white",
@@ -101,7 +101,7 @@ export default function PricingSection(): React.JSX.Element {
             Simple, Transparent Pricing
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Choose the plan that fits your flight booking and tracking needs. No hidden fees, no surprises—just value.
+            Choose the plan that fits your flight tracking needs. No hidden fees, no surprises—just value.
           </p>
         </div>
 

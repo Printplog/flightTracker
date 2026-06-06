@@ -29,7 +29,7 @@ export default function Footer() {
               ABOUT MYFLIGHTLOOKUP
             </h3>
             <p className="text-gray-200 leading-relaxed text-sm">
-              MyFlightLookup is your trusted partner for comprehensive worldwide flight tracking and booking services. 
+              MyFlightLookup is your trusted partner for comprehensive worldwide flight tracking. 
               Track any flight from any airline, anywhere in the world, with real-time updates and complete global coverage. 
               Our mission is to provide accurate, reliable flight tracking that keeps you informed, no matter where your journey takes you across the globe.
             </p>
