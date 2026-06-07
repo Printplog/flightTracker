@@ -13,13 +13,13 @@ export default function AboutSection() {
         </div>
 
         {/* Main Card */}
-        <div className="w-full bg-card rounded-3xl shadow-xl flex flex-col md:flex-row overflow-hidden">
+        <div className="w-full bg-card rounded-3xl shadow-xl flex flex-col md:flex-row md:items-stretch overflow-hidden">
           {/* Left: Image with overlay and badge */}
-          <div className="relative md:w-1/2 min-h-[320px] max-h-[450px] overflow-hidden">
+          <div className="relative md:w-1/2 min-h-[320px] md:min-h-0 overflow-hidden">
             <img
               src="/plane.jpg"
               alt="MyFlightLookup operations"
-              className="object-cover w-full h-full min-h-[320px] md:min-h-[400px] max-h-[450px]"
+              className="object-cover w-full h-full min-h-[320px] md:min-h-full"
             />
             {/* Overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-transparent" />
