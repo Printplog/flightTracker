@@ -10,7 +10,7 @@ export default function Companies() {
     <section className="w-full max-w-7xl mx-auto py-10">
       <div className="mx-auto max-w-5xl">
         <h3 className="mb-6 text-center text-sm font-medium text-muted-foreground">
-          Partners
+          Airlines
         </h3>
 
         <div className="relative marquee overflow-hidden">

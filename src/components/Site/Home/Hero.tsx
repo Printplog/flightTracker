@@ -7,7 +7,7 @@ export default function Hero() {
   const navigate = useNavigate();
 
   return (
-    <div className="relative w-full bg-gradient-to-b from-[#faf9f6] via-[#f5f4ef] to-[#eceae3] overflow-hidden">
+    <div className="relative w-full bg-purple-950 overflow-hidden">
       <SectionPadding className="relative z-10 max-w-7xl mx-auto w-full py-12 sm:py-16 md:py-20 lg:py-28">
 
         {/* Left: text & search */}
@@ -20,19 +20,19 @@ export default function Hero() {
             Real-time global tracking
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 mb-4 leading-tight font-title">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-white mb-4 leading-tight font-hero">
             Track Any Flight
             <br />
-            <span className="text-primary">Anywhere in the World</span>
+            <span className="text-purple-300">Anywhere in the World</span>
           </h1>
 
-          <p className="text-lg text-slate-600 max-w-lg mb-8">
+          <p className="text-lg text-slate-300 max-w-lg mb-8">
             Real-time flight tracking with instant updates
           </p>
 
           {/* Search Box */}
           <div className="w-full max-w-xl">
-            <div className="flex flex-col sm:flex-row gap-2 p-2 bg-white rounded-xl shadow-xl shadow-slate-300/40 border border-slate-200">
+            <div className="flex flex-col sm:flex-row gap-2 p-2 bg-white rounded-xl border border-slate-200">
               <input
                 type="text"
                 value={trackingCode}

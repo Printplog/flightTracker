@@ -15,6 +15,15 @@
   font-display: swap;
 }
 
+/* Clash Grotesk — variable font used for hero. */
+@font-face {
+  font-family: "Clash Grotesk";
+  src: url("/fonts/ClashGrotesk/ClashGrotesk-Variable.woff2") format("woff2");
+  font-weight: 200 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Metropolis — used for body / normal text. Served from /public/fonts. */
 @font-face {
   font-family: "Metropolis";
@@ -56,6 +65,7 @@
 
 @theme inline {
   --font-title: "Afacad Flux", sans-serif;
+  --font-hero: "Clash Grotesk", sans-serif;
   --font-sans: "Metropolis", sans-serif;
 }
 
