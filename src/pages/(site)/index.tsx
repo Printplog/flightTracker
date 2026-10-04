@@ -15,6 +15,7 @@ import { useEffect } from "react";
 export default function Home() {
   const [params] = useSearchParams();
   const id = params.get("trackingId");
+  const searchKey = params.toString();
 
   // Always scroll to top if the full URL (including query params) changes.
   // This uses useEffect to watch the full search params and triggers window.scrollTo(0,0).
@@ -25,7 +26,7 @@ export default function Home() {
     // Remove or comment out in production if not needed
     // console.log("Scroll to top triggered by search params:", params.toString());
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-  }, [params.toString()]);
+  }, [searchKey]);
 
   return (
     <div className="">
@@ -63,7 +64,14 @@ export default function Home() {
           </section>
         </>
       )}
-      {id && <FlightTracker />}
+      {id && (
+        <>
+          <FlightTracker />
+          <section id="contact">
+            <ContactForm trackingId={id} />
+          </section>
+        </>
+      )}
     </div>
   );
 }

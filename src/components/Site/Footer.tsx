@@ -1,156 +1,25 @@
-import React, { useState } from 'react';
-import { toast } from 'sonner';
+import { Headphones, Plane } from 'lucide-react';
 
 export default function Footer() {
-  const [email, setEmail] = useState<string>('');
-
-  const handleSubscribe = (): void => {
-    if (email) {
-      toast.success('Subscribed successfully!', {
-        description: 'You will receive flight tracking updates and travel insights.',
-      });
-      setEmail('');
-    } else {
-      toast.error('Please enter your email address');
-    }
-  };
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setEmail(e.target.value);
-  };
-
   return (
-    <footer className="bg-foreground/90 text-white py-16 px-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          {/* About MyFlightLookup */}
-          <div>
-            <h3 className="text-lg font-bold mb-6 text-primary">
-              ABOUT MYFLIGHTLOOKUP
-            </h3>
-            <p className="text-gray-200 leading-relaxed text-sm">
-              MyFlightLookup is your trusted partner for comprehensive worldwide flight tracking. 
-              Track any flight from any airline, anywhere in the world, with real-time updates and complete global coverage. 
-              Our mission is to provide accurate, reliable flight tracking that keeps you informed, no matter where your journey takes you across the globe.
-            </p>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-lg font-bold mb-6 text-primary">
-              QUICK LINKS
-            </h3>
-            <ul className="space-y-3">
-              <li>
-                <a 
-                  href="#why-us" 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    const section = document.getElementById('why-us');
-                    if (section) {
-                      const navbarHeight = 80;
-                      const elementPosition = section.getBoundingClientRect().top;
-                      const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
-                      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                    }
-                  }}
-                  className="text-gray-200 hover:text-white transition-colors text-sm"
-                >
-                  Why Choose Us
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#faq" 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    const section = document.getElementById('faq');
-                    if (section) {
-                      const navbarHeight = 80;
-                      const elementPosition = section.getBoundingClientRect().top;
-                      const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
-                      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                    }
-                  }}
-                  className="text-gray-200 hover:text-white transition-colors text-sm"
-                >
-                  FAQs
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#how-it-works" 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    const section = document.getElementById('how-it-works');
-                    if (section) {
-                      const navbarHeight = 80;
-                      const elementPosition = section.getBoundingClientRect().top;
-                      const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
-                      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                    }
-                  }}
-                  className="text-gray-200 hover:text-white transition-colors text-sm"
-                >
-                  How It Works
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#contact" 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    const section = document.getElementById('contact');
-                    if (section) {
-                      const navbarHeight = 80;
-                      const elementPosition = section.getBoundingClientRect().top;
-                      const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
-                      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                    }
-                  }}
-                  className="text-gray-200 hover:text-white transition-colors text-sm"
-                >
-                  Contact Support
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Newsletter Section */}
-          <div>
-            <h3 className="text-lg font-bold mb-6 text-primary">
-              STAY UPDATED
-            </h3>
-            <p className="text-gray-200 text-sm mb-4">
-              Get the latest global flight tracking updates, travel insights, and exclusive offers straight to your inbox.
-            </p>
-            <form
-              className="flex flex-col sm:flex-row gap-2 w-full"
-              onSubmit={e => {
-                e.preventDefault();
-                handleSubscribe();
-              }}
-            >
-              <input
-                type="email"
-                value={email}
-                onChange={handleEmailChange}
-                placeholder="Your email address"
-                className="flex-1 px-4 py-3 text-gray-900 bg-white rounded-md sm:rounded-l-md sm:rounded-r-none focus:outline-none focus:ring-2 focus:ring-primary w-full"
-              />
-              <button
-                type="submit"
-                className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-md sm:rounded-l-none sm:rounded-r-md transition-colors font-medium w-full sm:w-auto"
-              >
-                Subscribe
-              </button>
-            </form>
-            </div>
-          </div>
+    <footer className="bg-[#041225] px-4 py-14 text-white">
+      <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-[1.3fr_0.7fr_1fr]">
+        <div>
+          <div className="flex items-center gap-3"><img src="/logo.png" alt="" className="h-9 w-auto" /><p className="text-xl font-bold">MyFlightLookup</p></div>
+          <p className="mt-5 max-w-md text-sm leading-7 text-white/55">Review the flight information attached to your tracking ID and reach the responsible support team from the same page.</p>
         </div>
-        <div className="mt-12 border-t border-white/10 pt-8 text-center text-xs text-gray-300">
-          &copy; {new Date().getFullYear()} MyFlightLookup. All rights reserved.
+        <div>
+          <p className="font-semibold text-sky-300">Navigate</p>
+          <div className="mt-5 space-y-3 text-sm text-white/60"><a className="block hover:text-white" href="/#hero">Track a flight</a><a className="block hover:text-white" href="/#faq">Flight help</a><a className="block hover:text-white" href="/#contact">Contact support</a></div>
         </div>
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+          <Headphones className="size-6 text-sky-300" />
+          <p className="mt-4 font-semibold">Question about a flight record?</p>
+          <p className="mt-2 text-sm leading-6 text-white/50">Use the booking or tracking ID shown on your document.</p>
+          <a href="/#contact" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-sky-300 px-4 py-2.5 text-sm font-semibold text-[#041225]"><Plane className="size-4" /> Contact flight support</a>
+        </div>
+      </div>
+      <p className="mx-auto mt-10 max-w-6xl border-t border-white/10 pt-6 text-xs text-white/35">© {new Date().getFullYear()} MyFlightLookup. Flight information is supplied by the record owner.</p>
     </footer>
   );
 }
