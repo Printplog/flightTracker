@@ -13,6 +13,7 @@ import {
 import {
   forgetSupportSession,
   loadSupportSession,
+  refreshSupportSession,
   rememberSupportSession,
   SUPPORT_SESSION_EVENT,
 } from '@/lib/supportSession';
@@ -31,7 +32,20 @@ export default function SupportWidget() {
 
   const refreshThread = useCallback(async (activeSession: StoredSupportSession) => {
     try {
-      setThread(await getTrackingSupportThread(activeSession));
+      const nextThread = await getTrackingSupportThread(activeSession);
+      setThread(nextThread);
+      if (
+        activeSession.channel !== nextThread.channel
+        || activeSession.realtime.enabled !== nextThread.realtime.enabled
+        || activeSession.realtime.key !== nextThread.realtime.key
+        || activeSession.realtime.cluster !== nextThread.realtime.cluster
+      ) {
+        setSession(refreshSupportSession({
+          ...activeSession,
+          channel: nextThread.channel,
+          realtime: nextThread.realtime,
+        }));
+      }
       setThreadError(false);
     } catch (error) {
       if (isAxiosError(error) && error.response?.status === 404) {
@@ -81,6 +95,7 @@ export default function SupportWidget() {
     const channel = pusher.subscribe(session.channel);
     const update = () => refreshThread(session);
     channel.bind('support.updated', update);
+    channel.bind('support.customer_message', update);
     return () => {
       channel.unbind_all();
       pusher.unsubscribe(session.channel);

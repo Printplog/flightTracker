@@ -73,6 +73,8 @@ export type TrackingSupportThread = {
   subject: string;
   status: 'new' | 'read' | 'closed';
   conversation: SupportConversationEntry[];
+  channel: string;
+  realtime: SupportRealtimeConfig;
 };
 
 export type StoredSupportSession = {

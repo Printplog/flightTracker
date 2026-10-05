@@ -24,6 +24,11 @@ export function rememberSupportSession(response: TrackingSupportCreateResponse) 
   return session;
 }
 
+export function refreshSupportSession(session: StoredSupportSession) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+  return session;
+}
+
 export function forgetSupportSession() {
   localStorage.removeItem(STORAGE_KEY);
   window.dispatchEvent(new CustomEvent(SUPPORT_SESSION_EVENT, { detail: null }));
