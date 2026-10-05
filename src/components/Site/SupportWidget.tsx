@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { isAxiosError } from 'axios';
-import { Headphones, LoaderCircle, MessageCircle, Send, X } from 'lucide-react';
+import { ArrowLeft, Headphones, LoaderCircle, MessageCircle, Plus, Send, X } from 'lucide-react';
 import Pusher from 'pusher-js';
 import { toast } from 'sonner';
 
@@ -11,8 +11,10 @@ import {
   submitTrackingSupport,
 } from '@/api/apiEndpoints';
 import {
+  activateSupportSession,
   forgetSupportSession,
   loadSupportSession,
+  loadSupportSessions,
   refreshSupportSession,
   rememberSupportSession,
   SUPPORT_SESSION_EVENT,
@@ -21,7 +23,9 @@ import type { StoredSupportSession, TrackingSupportThread } from '@/types';
 
 export default function SupportWidget() {
   const [open, setOpen] = useState(false);
+  const [sessions, setSessions] = useState<StoredSupportSession[]>(() => loadSupportSessions());
   const [session, setSession] = useState<StoredSupportSession | null>(() => loadSupportSession());
+  const [view, setView] = useState<'list' | 'new' | 'thread'>(() => loadSupportSession() ? 'thread' : 'new');
   const [thread, setThread] = useState<TrackingSupportThread | null>(null);
   const [trackingId, setTrackingId] = useState('');
   const [reply, setReply] = useState('');
@@ -39,19 +43,25 @@ export default function SupportWidget() {
         || activeSession.realtime.enabled !== nextThread.realtime.enabled
         || activeSession.realtime.key !== nextThread.realtime.key
         || activeSession.realtime.cluster !== nextThread.realtime.cluster
+        || activeSession.trackingId !== nextThread.tracking_id
       ) {
-        setSession(refreshSupportSession({
+        const refreshed = refreshSupportSession({
           ...activeSession,
+          trackingId: nextThread.tracking_id,
           channel: nextThread.channel,
           realtime: nextThread.realtime,
-        }));
+        });
+        setSession(refreshed);
+        setSessions(loadSupportSessions());
       }
       setThreadError(false);
     } catch (error) {
       if (isAxiosError(error) && error.response?.status === 404) {
-        forgetSupportSession();
+        const remaining = forgetSupportSession(activeSession.id);
+        setSessions(remaining);
         setSession(null);
         setThread(null);
+        setView(remaining.length ? 'list' : 'new');
       } else {
         setThreadError(true);
       }
@@ -67,10 +77,12 @@ export default function SupportWidget() {
   useEffect(() => {
     const syncSession = (event: Event) => {
       const next = (event as CustomEvent<StoredSupportSession | null>).detail;
+      setSessions(loadSupportSessions());
       setSession(next);
       if (next) {
         setOpen(true);
         setLoadingThread(true);
+        setView('thread');
       }
     };
     window.addEventListener(SUPPORT_SESSION_EVENT, syncSession);
@@ -115,9 +127,11 @@ export default function SupportWidget() {
         tracking_id: trackingId.trim(),
         source: 'flight_lookup',
       });
-      const next = rememberSupportSession(response);
+      const next = rememberSupportSession(response, trackingId.trim());
+      setSessions(loadSupportSessions());
       setSession(next);
       setLoadingThread(true);
+      setView('thread');
       setTrackingId('');
     } catch {
       toast.error('Could not start the conversation. Check your tracking ID and details.');
@@ -126,9 +140,9 @@ export default function SupportWidget() {
     }
   };
 
-  const sendReply = async (event: FormEvent) => {
-    event.preventDefault();
-    if (!session || !reply.trim()) return;
+  const sendReply = async (event?: FormEvent) => {
+    event?.preventDefault();
+    if (!session || !reply.trim() || busy) return;
     setBusy(true);
     try {
       await sendTrackingSupportMessage(session, reply.trim());
@@ -141,22 +155,58 @@ export default function SupportWidget() {
     }
   };
 
-  const startAnother = () => {
-    forgetSupportSession();
+  const showConversationList = () => {
     setSession(null);
     setThread(null);
+    setReply('');
+    setView('list');
+  };
+
+  const showNewConversation = () => {
+    setSession(null);
+    setThread(null);
+    setTrackingId('');
+    setView('new');
+  };
+
+  const openConversation = (id: string) => {
+    const next = activateSupportSession(id);
+    if (!next) return;
+    setSession(next);
+    setThread(null);
+    setThreadError(false);
+    setLoadingThread(true);
+    setView('thread');
   };
 
   return (
     <div className="fixed bottom-5 right-5 z-[100000] sm:bottom-7 sm:right-7">
       {open && (
         <section aria-label="Flight support conversation" className="mb-3 flex h-[min(650px,calc(100dvh-7rem))] w-[min(390px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-sky-200/15 bg-[#071425] shadow-[0_24px_80px_rgba(3,13,28,0.5)]">
-          <header className="flex items-center justify-between border-b border-white/10 bg-[#081a30] px-5 py-4 text-white">
-            <div><p className="font-title text-sm font-semibold">Flight support</p><p className="mt-0.5 text-[11px] text-white/45">{session?.realtime.enabled ? 'Live conversation' : 'Replies continue by email'}</p></div>
+          <header className="flex items-center justify-between border-b border-white/10 bg-[#081a30] px-3 py-3 text-white">
+            <div className="flex min-w-0 items-center gap-2">
+              {view !== 'list' && sessions.length > 0 && <button type="button" onClick={showConversationList} aria-label="Back to conversations" className="grid size-9 shrink-0 place-items-center rounded-lg text-white/55 transition hover:bg-white/10 hover:text-white"><ArrowLeft className="size-4" /></button>}
+              <div className="min-w-0"><p className="truncate font-title text-sm font-semibold">{view === 'list' ? 'Your conversations' : view === 'new' ? 'New conversation' : 'Flight support'}</p><p className="mt-0.5 truncate text-[11px] text-white/45">{view === 'thread' ? (session?.realtime.enabled ? 'Live conversation' : 'Replies continue by email') : 'Help with your flight record'}</p></div>
+            </div>
             <button type="button" onClick={() => setOpen(false)} aria-label="Close support" className="grid size-9 place-items-center rounded-lg text-white/55 transition hover:bg-white/10 hover:text-white"><X className="size-4" /></button>
           </header>
 
-          {session ? (
+          {view === 'list' ? (
+            <div className="flex flex-1 flex-col overflow-hidden bg-[#071425]">
+              <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+                <p className="text-xs text-white/40">Continue a previous request</p>
+                <button type="button" onClick={showNewConversation} className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-sky-300 px-3 text-xs font-semibold text-[#041225]"><Plus className="size-3.5" /> New chat</button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-3">
+                <div className="space-y-2">{sessions.map((item) => (
+                  <button key={item.id} type="button" onClick={() => openConversation(item.id)} className="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-3 text-left transition hover:border-sky-300/30 hover:bg-white/[0.07]">
+                    <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-sky-300/10 text-sky-300"><MessageCircle className="size-4" /></span>
+                    <span className="min-w-0 flex-1"><span className="block truncate font-mono text-sm font-medium text-white/85">{item.trackingId || `Request ${item.id.slice(0, 8).toUpperCase()}`}</span><span className="mt-1 block text-[11px] text-white/40">Open conversation</span></span>
+                  </button>
+                ))}</div>
+              </div>
+            </div>
+          ) : view === 'thread' && session ? (
             <>
               <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto bg-[#071425] p-4">
                 {loadingThread ? <div className="grid h-full place-items-center"><LoaderCircle className="size-5 animate-spin text-sky-300" /></div> : threadError && !thread ? <div className="grid h-full place-items-center text-center"><div><p className="text-sm text-white/55">The conversation could not load.</p><button type="button" onClick={() => refreshThread(session)} className="mt-3 text-sm font-semibold text-sky-300">Try again</button></div></div> : thread?.conversation.map((entry) => (
@@ -169,10 +219,9 @@ export default function SupportWidget() {
               </div>
               <form onSubmit={sendReply} className="border-t border-white/10 bg-[#081a30] p-3">
                 <div className="flex items-end gap-2 rounded-xl border border-white/15 bg-white/[0.04] p-2 focus-within:border-sky-300/60">
-                  <textarea aria-label="Message support" rows={1} maxLength={10000} value={reply} onChange={(event) => setReply(event.target.value)} placeholder="Write a message" className="max-h-28 min-h-10 flex-1 resize-none bg-transparent px-2 py-2 text-sm text-white outline-none placeholder:text-white/30" />
+                  <textarea aria-label="Message support" rows={1} maxLength={10000} value={reply} onChange={(event) => setReply(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); void sendReply(); } }} placeholder="Write a message" className="max-h-28 min-h-10 flex-1 resize-none bg-transparent px-2 py-2 text-sm text-white outline-none placeholder:text-white/30" />
                   <button type="submit" disabled={busy || !reply.trim()} aria-label="Send message" className="grid size-10 shrink-0 place-items-center rounded-lg bg-sky-300 text-[#041225] disabled:opacity-40"><Send className="size-4" /></button>
                 </div>
-                <button type="button" onClick={startAnother} className="mt-2 text-xs font-medium text-white/35 hover:text-white/70">Start a different request</button>
               </form>
             </>
           ) : (
