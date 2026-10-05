@@ -38,10 +38,28 @@ export type PurchasedTemplate = {
 export type TrackingSupportPayload = {
   tracking_id: string;
   source: 'flight_lookup';
+  verification_token: string;
   customer_name?: string;
   customer_email?: string;
   subject?: string;
   message?: string;
+};
+
+export type SupportEmailVerificationRequest = {
+  tracking_id: string;
+  source: 'flight_lookup';
+  email: string;
+};
+
+export type SupportEmailVerificationChallenge = {
+  challenge_id: string;
+  email_hint: string;
+  expires_in: number;
+};
+
+export type SupportEmailVerificationGrant = {
+  verification_token: string;
+  email: string;
 };
 
 export type SupportRealtimeConfig = {

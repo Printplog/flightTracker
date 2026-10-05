@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { isAxiosError } from 'axios';
-import { ArrowLeft, Headphones, LoaderCircle, MessageCircle, Plus, Send, X } from 'lucide-react';
+import { ArrowLeft, Headphones, LoaderCircle, MailCheck, MessageCircle, Plus, Send, X } from 'lucide-react';
 import Pusher from 'pusher-js';
 import { toast } from 'sonner';
 
 import {
   authorizeTrackingSupportRealtime,
+  confirmSupportEmailVerification,
   getTrackingSupportThread,
+  requestSupportEmailVerification,
   sendTrackingSupportMessage,
   submitTrackingSupport,
 } from '@/api/apiEndpoints';
@@ -19,7 +21,12 @@ import {
   rememberSupportSession,
   SUPPORT_SESSION_EVENT,
 } from '@/lib/supportSession';
-import type { StoredSupportSession, TrackingSupportThread } from '@/types';
+import type { StoredSupportSession, SupportEmailVerificationChallenge, TrackingSupportThread } from '@/types';
+
+function supportError(error: unknown, fallback: string) {
+  if (isAxiosError(error) && typeof error.response?.data?.detail === 'string') return error.response.data.detail;
+  return fallback;
+}
 
 export default function SupportWidget() {
   const [open, setOpen] = useState(false);
@@ -28,6 +35,9 @@ export default function SupportWidget() {
   const [view, setView] = useState<'list' | 'new' | 'thread'>(() => loadSupportSession() ? 'thread' : 'new');
   const [thread, setThread] = useState<TrackingSupportThread | null>(null);
   const [trackingId, setTrackingId] = useState('');
+  const [email, setEmail] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
+  const [verificationChallenge, setVerificationChallenge] = useState<SupportEmailVerificationChallenge | null>(null);
   const [reply, setReply] = useState('');
   const [busy, setBusy] = useState(false);
   const [loadingThread, setLoadingThread] = useState(Boolean(session));
@@ -123,9 +133,23 @@ export default function SupportWidget() {
     event.preventDefault();
     setBusy(true);
     try {
+      if (!verificationChallenge) {
+        const challenge = await requestSupportEmailVerification({
+          tracking_id: trackingId.trim(),
+          source: 'flight_lookup',
+          email: email.trim(),
+        });
+        setVerificationChallenge(challenge);
+        setVerificationCode('');
+        toast.success('Verification code sent');
+        return;
+      }
+      const grant = await confirmSupportEmailVerification(verificationChallenge.challenge_id, verificationCode.trim());
       const response = await submitTrackingSupport({
         tracking_id: trackingId.trim(),
         source: 'flight_lookup',
+        customer_email: grant.email,
+        verification_token: grant.verification_token,
       });
       const next = rememberSupportSession(response, trackingId.trim());
       setSessions(loadSupportSessions());
@@ -133,8 +157,11 @@ export default function SupportWidget() {
       setLoadingThread(true);
       setView('thread');
       setTrackingId('');
-    } catch {
-      toast.error('Could not start the conversation. Check your tracking ID and details.');
+      setEmail('');
+      setVerificationCode('');
+      setVerificationChallenge(null);
+    } catch (error) {
+      toast.error(supportError(error, 'Could not verify your email or start the conversation. Try again.'));
     } finally {
       setBusy(false);
     }
@@ -166,6 +193,9 @@ export default function SupportWidget() {
     setSession(null);
     setThread(null);
     setTrackingId('');
+    setEmail('');
+    setVerificationCode('');
+    setVerificationChallenge(null);
     setView('new');
   };
 
@@ -226,9 +256,17 @@ export default function SupportWidget() {
             </>
           ) : (
             <form onSubmit={startConversation} className="flex flex-1 flex-col justify-center p-5 text-white">
-              <div><h2 className="font-title text-xl font-medium">Start a conversation</h2><p className="mt-1 text-xs leading-5 text-white/45">Enter the tracking ID on your flight record.</p></div>
-              <input required autoFocus value={trackingId} onChange={(event) => setTrackingId(event.target.value)} placeholder="Tracking ID" className="mt-6 h-12 w-full rounded-lg border border-white/15 bg-white/[0.04] px-3 font-mono text-sm outline-none focus:border-sky-300/70" />
-              <button type="submit" disabled={busy || !trackingId.trim()} className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-sky-300 font-semibold text-[#041225] disabled:opacity-50">{busy ? <LoaderCircle className="size-4 animate-spin" /> : <MessageCircle className="size-4" />} Continue</button>
+              {!verificationChallenge ? <>
+                <div><h2 className="font-title text-xl font-medium">Verify your email</h2><p className="mt-1 text-xs leading-5 text-white/45">We’ll use it to notify you when flight support replies.</p></div>
+                <input required autoFocus value={trackingId} onChange={(event) => setTrackingId(event.target.value)} placeholder="Tracking ID" className="mt-6 h-12 w-full rounded-lg border border-white/15 bg-white/[0.04] px-3 font-mono text-sm outline-none focus:border-sky-300/70" />
+                <input required type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email address" className="mt-3 h-12 w-full rounded-lg border border-white/15 bg-white/[0.04] px-3 text-sm outline-none focus:border-sky-300/70" />
+                <button type="submit" disabled={busy || !trackingId.trim() || !email.trim()} className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-sky-300 font-semibold text-[#041225] disabled:opacity-50">{busy ? <LoaderCircle className="size-4 animate-spin" /> : <MailCheck className="size-4" />} Send verification code</button>
+              </> : <>
+                <div><h2 className="font-title text-xl font-medium">Check your inbox</h2><p className="mt-1 text-xs leading-5 text-white/45">Enter the four-digit code sent to {verificationChallenge.email_hint}.</p></div>
+                <input required autoFocus inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{4}" maxLength={4} value={verificationCode} onChange={(event) => setVerificationCode(event.target.value.replace(/\D/g, ''))} placeholder="0000" aria-label="Verification code" className="mt-6 h-14 w-full rounded-lg border border-white/15 bg-white/[0.04] px-3 text-center font-mono text-xl tracking-[0.35em] outline-none focus:border-sky-300/70" />
+                <button type="submit" disabled={busy || verificationCode.length !== 4} className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-sky-300 font-semibold text-[#041225] disabled:opacity-50">{busy ? <LoaderCircle className="size-4 animate-spin" /> : <MessageCircle className="size-4" />} Verify and start chat</button>
+                <button type="button" onClick={() => { setVerificationChallenge(null); setVerificationCode(''); }} className="mt-3 text-xs font-medium text-white/40 hover:text-white/75">Use a different email</button>
+              </>}
             </form>
           )}
         </section>

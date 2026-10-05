@@ -1,5 +1,8 @@
 import type {
   PurchasedTemplate,
+  SupportEmailVerificationChallenge,
+  SupportEmailVerificationGrant,
+  SupportEmailVerificationRequest,
   StoredSupportSession,
   SupportConversationEntry,
   TrackingSupportCreateResponse,
@@ -15,6 +18,16 @@ export const trackOrder = async (id: string): Promise<PurchasedTemplate> => {
 
 export const submitTrackingSupport = async (payload: TrackingSupportPayload): Promise<TrackingSupportCreateResponse> => {
   const res = await apiClient.post('/tracking-support/', payload);
+  return res.data;
+};
+
+export const requestSupportEmailVerification = async (payload: SupportEmailVerificationRequest): Promise<SupportEmailVerificationChallenge> => {
+  const res = await apiClient.post('/tracking-support/verify-email/request/', payload);
+  return res.data;
+};
+
+export const confirmSupportEmailVerification = async (challengeId: string, code: string): Promise<SupportEmailVerificationGrant> => {
+  const res = await apiClient.post('/tracking-support/verify-email/confirm/', { challenge_id: challengeId, code });
   return res.data;
 };
 
