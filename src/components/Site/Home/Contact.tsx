@@ -3,6 +3,7 @@ import { CheckCircle2, Send } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { submitTrackingSupport } from '@/api/apiEndpoints';
+import { rememberSupportSession } from '@/lib/supportSession';
 
 type ContactFormProps = {
   trackingId?: string;
@@ -52,6 +53,7 @@ export default function ContactPage({ trackingId = '' }: ContactFormProps) {
         subject: form.subject.trim(),
         message: form.message.trim(),
       });
+      rememberSupportSession(response);
       setReference(response.id.slice(0, 8).toUpperCase());
       setForm((current) => ({ ...EMPTY_FORM, trackingId: current.trackingId }));
       toast.success('Support request received');

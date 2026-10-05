@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom'
 import Navbar from '../../components/Site/Navbar'
 import Footer from '../../components/Site/Footer'
+import SupportWidget from '../../components/Site/SupportWidget'
 
 export default function SiteLayout() {
   return (
@@ -10,6 +11,7 @@ export default function SiteLayout() {
         <Outlet />
       </main>
       <Footer />
+      <SupportWidget />
     </div>
   )
 }

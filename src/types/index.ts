@@ -38,8 +38,46 @@ export type PurchasedTemplate = {
 export type TrackingSupportPayload = {
   tracking_id: string;
   source: 'flight_lookup';
-  customer_name: string;
-  customer_email: string;
-  subject: string;
+  customer_name?: string;
+  customer_email?: string;
+  subject?: string;
+  message?: string;
+};
+
+export type SupportRealtimeConfig = {
+  enabled: boolean;
+  key: string;
+  cluster: string;
+};
+
+export type TrackingSupportCreateResponse = {
+  id: string;
   message: string;
+  access_token: string;
+  channel: string;
+  realtime: SupportRealtimeConfig;
+};
+
+export type SupportConversationEntry = {
+  id: string;
+  direction: 'customer' | 'owner';
+  body: string;
+  delivery_status: string;
+  created_at: string;
+};
+
+export type TrackingSupportThread = {
+  id: string;
+  tracking_id: string;
+  customer_name: string;
+  subject: string;
+  status: 'new' | 'read' | 'closed';
+  conversation: SupportConversationEntry[];
+};
+
+export type StoredSupportSession = {
+  id: string;
+  accessToken: string;
+  channel: string;
+  realtime: SupportRealtimeConfig;
 };
