@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { isAxiosError } from 'axios';
-import { ArrowLeft, Headphones, LoaderCircle, MailCheck, MessageCircle, Plus, Send, X } from 'lucide-react';
+import { ArrowLeft, Clock, Headphones, LoaderCircle, MailCheck, MessageCircle, Plus, Send, X } from 'lucide-react';
 import Pusher from 'pusher-js';
 import { toast } from 'sonner';
 
@@ -10,6 +10,7 @@ import {
   getTrackingSupportThread,
   requestSupportEmailVerification,
   sendTrackingSupportMessage,
+  sendTrackingSupportTyping,
   submitTrackingSupport,
 } from '@/api/apiEndpoints';
 import {
@@ -21,11 +22,63 @@ import {
   rememberSupportSession,
   SUPPORT_SESSION_EVENT,
 } from '@/lib/supportSession';
-import type { StoredSupportSession, SupportEmailVerificationChallenge, TrackingSupportThread } from '@/types';
+import type {
+  StoredSupportSession,
+  SupportConversationEntry,
+  SupportEmailVerificationChallenge,
+  SupportTypingEvent,
+  TrackingSupportThread,
+} from '@/types';
+
+const TYPING_EXPIRE_MS = 5500;
+const TYPING_PING_INTERVAL_MS = 2400;
+const TYPING_IDLE_STOP_MS = 3000;
+
+type OptimisticEntry = SupportConversationEntry & { pending?: boolean };
 
 function supportError(error: unknown, fallback: string) {
   if (isAxiosError(error) && typeof error.response?.data?.detail === 'string') return error.response.data.detail;
   return fallback;
+}
+
+function formatTime(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+}
+
+function AgentAvatar({
+  avatarUrl,
+  name,
+  size = 'md',
+  online = false,
+}: {
+  avatarUrl?: string | null;
+  name: string;
+  size?: 'sm' | 'md';
+  online?: boolean;
+}) {
+  const dims = size === 'sm' ? 'size-7' : 'size-9';
+  const iconDims = size === 'sm' ? 'size-3.5' : 'size-4';
+  return (
+    <span className="relative inline-flex shrink-0">
+      <span className={`grid place-items-center overflow-hidden rounded-full bg-sky-300/15 text-sky-300 ring-1 ring-white/15 ${dims}`}>
+        {avatarUrl ? (
+          <img src={avatarUrl} alt={name} className="size-full object-cover" />
+        ) : (
+          <Headphones className={iconDims} aria-hidden="true" />
+        )}
+      </span>
+      {online && (
+        <span className="absolute bottom-0 right-0 size-2.5 rounded-full border-2 border-[#081a30] bg-emerald-400" />
+      )}
+    </span>
+  );
 }
 
 export default function SupportWidget() {
@@ -39,10 +92,81 @@ export default function SupportWidget() {
   const [verificationCode, setVerificationCode] = useState('');
   const [verificationChallenge, setVerificationChallenge] = useState<SupportEmailVerificationChallenge | null>(null);
   const [reply, setReply] = useState('');
+  const [pendingEntries, setPendingEntries] = useState<OptimisticEntry[]>([]);
   const [busy, setBusy] = useState(false);
   const [loadingThread, setLoadingThread] = useState(Boolean(session));
   const [threadError, setThreadError] = useState(false);
+  const [hasUnreadReply, setHasUnreadReply] = useState(false);
+  const [agentTyping, setAgentTyping] = useState<{ active: boolean; name: string }>({ active: false, name: '' });
+
+  const openRef = useRef(open);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const agentTypingTimerRef = useRef<number | null>(null);
+  const isEmittingTypingRef = useRef(false);
+  const lastTypingPingRef = useRef(0);
+  const stopTypingTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    openRef.current = open;
+  }, [open]);
+
+  const supportProfile = thread?.support_profile;
+  const agentName = supportProfile?.display_name?.trim() || 'Support';
+  const agentAvatarUrl = supportProfile?.avatar_url ?? null;
+
+  const clearAgentTyping = useCallback(() => {
+    if (agentTypingTimerRef.current !== null) {
+      window.clearTimeout(agentTypingTimerRef.current);
+      agentTypingTimerRef.current = null;
+    }
+    setAgentTyping((prev) => (prev.active ? { active: false, name: '' } : prev));
+  }, []);
+
+  const stopCustomerTyping = useCallback((activeSession: StoredSupportSession | null) => {
+    if (stopTypingTimerRef.current !== null) {
+      window.clearTimeout(stopTypingTimerRef.current);
+      stopTypingTimerRef.current = null;
+    }
+    if (isEmittingTypingRef.current && activeSession) {
+      isEmittingTypingRef.current = false;
+      lastTypingPingRef.current = 0;
+      void sendTrackingSupportTyping(activeSession, false).catch(() => {});
+    } else {
+      isEmittingTypingRef.current = false;
+      lastTypingPingRef.current = 0;
+    }
+  }, []);
+
+  const notifyCustomerTyping = useCallback(
+    (hasText: boolean) => {
+      if (!session || thread?.status === 'closed' || !session.realtime.enabled) return;
+      if (!hasText) {
+        stopCustomerTyping(session);
+        return;
+      }
+
+      const now = Date.now();
+      if (!isEmittingTypingRef.current || now - lastTypingPingRef.current >= TYPING_PING_INTERVAL_MS) {
+        isEmittingTypingRef.current = true;
+        lastTypingPingRef.current = now;
+        void sendTrackingSupportTyping(session, true).catch(() => {});
+      }
+
+      if (stopTypingTimerRef.current !== null) {
+        window.clearTimeout(stopTypingTimerRef.current);
+      }
+      stopTypingTimerRef.current = window.setTimeout(() => {
+        stopTypingTimerRef.current = null;
+        if (isEmittingTypingRef.current) {
+          isEmittingTypingRef.current = false;
+          lastTypingPingRef.current = 0;
+          void sendTrackingSupportTyping(session, false).catch(() => {});
+        }
+      }, TYPING_IDLE_STOP_MS);
+    },
+    [session, stopCustomerTyping, thread?.status],
+  );
 
   const refreshThread = useCallback(async (activeSession: StoredSupportSession) => {
     try {
@@ -84,6 +208,15 @@ export default function SupportWidget() {
     if (session) refreshThread(session);
   }, [refreshThread, session]);
 
+  // Fallback polling when Pusher realtime is disabled
+  useEffect(() => {
+    if (!session || session.realtime.enabled || !open || view !== 'thread') return;
+    const id = window.setInterval(() => {
+      void refreshThread(session);
+    }, 8000);
+    return () => window.clearInterval(id);
+  }, [open, refreshThread, session, view]);
+
   useEffect(() => {
     const syncSession = (event: Event) => {
       const next = (event as CustomEvent<StoredSupportSession | null>).detail;
@@ -91,6 +224,7 @@ export default function SupportWidget() {
       setSession(next);
       if (next) {
         setOpen(true);
+        setHasUnreadReply(false);
         setLoadingThread(true);
         setView('thread');
       }
@@ -98,6 +232,34 @@ export default function SupportWidget() {
     window.addEventListener(SUPPORT_SESSION_EVENT, syncSession);
     return () => window.removeEventListener(SUPPORT_SESSION_EVENT, syncSession);
   }, []);
+
+  useEffect(() => {
+    clearAgentTyping();
+    setPendingEntries([]);
+    return () => {
+      stopCustomerTyping(session);
+    };
+  }, [clearAgentTyping, session, stopCustomerTyping]);
+
+  useEffect(() => {
+    if (!open) stopCustomerTyping(session);
+  }, [open, session, stopCustomerTyping]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [open]);
+
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(el.scrollHeight, 112)}px`;
+  }, [reply]);
 
   useEffect(() => {
     if (!session?.realtime.enabled) return;
@@ -115,19 +277,50 @@ export default function SupportWidget() {
       },
     });
     const channel = pusher.subscribe(session.channel);
-    const update = () => refreshThread(session);
+    const update = () => {
+      clearAgentTyping();
+      void refreshThread(session);
+      if (!openRef.current) setHasUnreadReply(true);
+    };
+    const handleTyping = (payload?: SupportTypingEvent) => {
+      if (!payload || payload.sender !== 'owner') return;
+      if (payload.ticket_id && payload.ticket_id !== session.id) return;
+      if (!payload.is_typing) {
+        clearAgentTyping();
+        return;
+      }
+      if (agentTypingTimerRef.current !== null) {
+        window.clearTimeout(agentTypingTimerRef.current);
+      }
+      setAgentTyping({ active: true, name: payload.sender_name?.trim() || 'Support' });
+      agentTypingTimerRef.current = window.setTimeout(() => {
+        agentTypingTimerRef.current = null;
+        setAgentTyping({ active: false, name: '' });
+      }, TYPING_EXPIRE_MS);
+    };
     channel.bind('support.updated', update);
     channel.bind('support.customer_message', update);
+    channel.bind('support.typing', handleTyping);
     return () => {
       channel.unbind_all();
       pusher.unsubscribe(session.channel);
       pusher.disconnect();
     };
-  }, [refreshThread, session]);
+  }, [clearAgentTyping, refreshThread, session]);
+
+  const combinedConversation = useMemo<OptimisticEntry[]>(() => {
+    const base = thread?.conversation ?? [];
+    if (!pendingEntries.length) return base;
+    return [...base, ...pendingEntries];
+  }, [pendingEntries, thread?.conversation]);
+
+  const isTypingVisible = view === 'thread' && agentTyping.active && thread?.status !== 'closed';
+  const typingDisplayName = agentTyping.name || agentName;
 
   useEffect(() => {
+    if (!open) return;
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
-  }, [thread?.conversation.length, open]);
+  }, [combinedConversation.length, isTypingVisible, open]);
 
   const startConversation = async (event: FormEvent) => {
     event.preventDefault();
@@ -169,13 +362,30 @@ export default function SupportWidget() {
 
   const sendReply = async (event?: FormEvent) => {
     event?.preventDefault();
-    if (!session || !reply.trim() || busy) return;
+    const trimmed = reply.trim();
+    if (!session || !trimmed || busy) return;
+    stopCustomerTyping(session);
+    const tempId = `pending-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    setPendingEntries((prev) => [
+      ...prev,
+      {
+        id: tempId,
+        direction: 'customer',
+        body: trimmed,
+        delivery_status: 'received',
+        created_at: new Date().toISOString(),
+        pending: true,
+      },
+    ]);
+    setReply('');
     setBusy(true);
     try {
-      await sendTrackingSupportMessage(session, reply.trim());
-      setReply('');
+      await sendTrackingSupportMessage(session, trimmed);
+      setPendingEntries((prev) => prev.filter((item) => item.id !== tempId));
       await refreshThread(session);
     } catch {
+      setPendingEntries((prev) => prev.filter((item) => item.id !== tempId));
+      setReply((current) => (current ? current : trimmed));
       toast.error('Your message could not be sent. Try again.');
     } finally {
       setBusy(false);
@@ -183,6 +393,7 @@ export default function SupportWidget() {
   };
 
   const showConversationList = () => {
+    stopCustomerTyping(session);
     setSession(null);
     setThread(null);
     setReply('');
@@ -190,6 +401,7 @@ export default function SupportWidget() {
   };
 
   const showNewConversation = () => {
+    stopCustomerTyping(session);
     setSession(null);
     setThread(null);
     setTrackingId('');
@@ -200,6 +412,7 @@ export default function SupportWidget() {
   };
 
   const openConversation = (id: string) => {
+    stopCustomerTyping(session);
     const next = activateSupportSession(id);
     if (!next) return;
     setSession(next);
@@ -209,16 +422,54 @@ export default function SupportWidget() {
     setView('thread');
   };
 
+  const toggleOpen = () => {
+    setOpen((value) => {
+      const next = !value;
+      if (next) setHasUnreadReply(false);
+      return next;
+    });
+  };
+
   return (
     <div className="fixed bottom-5 right-5 z-[100000] sm:bottom-7 sm:right-7">
       {open && (
         <section aria-label="Flight support conversation" className="mb-3 flex h-[min(650px,calc(100dvh-7rem))] w-[min(390px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-sky-200/15 bg-[#071425] shadow-[0_24px_80px_rgba(3,13,28,0.5)]">
           <header className="flex items-center justify-between border-b border-white/10 bg-[#081a30] px-3 py-3 text-white">
-            <div className="flex min-w-0 items-center gap-2">
-              {view !== 'list' && sessions.length > 0 && <button type="button" onClick={showConversationList} aria-label="Back to conversations" className="grid size-9 shrink-0 place-items-center rounded-lg text-white/55 transition hover:bg-white/10 hover:text-white"><ArrowLeft className="size-4" /></button>}
-              <div className="min-w-0"><p className="truncate font-title text-sm font-semibold">{view === 'list' ? 'Your conversations' : view === 'new' ? 'New conversation' : 'Flight support'}</p><p className="mt-0.5 truncate text-[11px] text-white/45">{view === 'thread' ? (session?.realtime.enabled ? 'Live conversation' : 'Replies continue by email') : 'Help with your flight record'}</p></div>
+            <div className="flex min-w-0 items-center gap-2.5">
+              {view !== 'list' && sessions.length > 0 && <button type="button" onClick={showConversationList} aria-label="Back to conversations" className="grid size-8 shrink-0 place-items-center rounded-lg text-white/55 transition hover:bg-white/10 hover:text-white"><ArrowLeft className="size-4" /></button>}
+              <AgentAvatar
+                avatarUrl={agentAvatarUrl}
+                name={agentName}
+                size="md"
+                online={Boolean(session?.realtime.enabled)}
+              />
+              <div className="min-w-0">
+                <p className="truncate font-title text-sm font-semibold">
+                  {view === 'list'
+                    ? 'Your conversations'
+                    : view === 'new'
+                      ? 'New conversation'
+                      : supportProfile?.display_name?.trim() || 'Flight support'}
+                </p>
+                <p className="mt-0.5 flex items-center gap-1.5 truncate text-[11px] text-white/50">
+                  {isTypingVisible ? (
+                    <span className="truncate font-medium text-sky-300">{typingDisplayName} is typing...</span>
+                  ) : (
+                    <>
+                      {view === 'thread' && session?.realtime.enabled && (
+                        <span className="inline-block size-1.5 shrink-0 rounded-full bg-emerald-400" />
+                      )}
+                      <span className="truncate">
+                        {view === 'thread'
+                          ? (session?.realtime.enabled ? 'Live conversation' : 'Replies continue by email')
+                          : 'Help with your flight record'}
+                      </span>
+                    </>
+                  )}
+                </p>
+              </div>
             </div>
-            <button type="button" onClick={() => setOpen(false)} aria-label="Close support" className="grid size-9 place-items-center rounded-lg text-white/55 transition hover:bg-white/10 hover:text-white"><X className="size-4" /></button>
+            <button type="button" onClick={() => setOpen(false)} aria-label="Close support" className="grid size-9 shrink-0 place-items-center rounded-lg text-white/55 transition hover:bg-white/10 hover:text-white"><X className="size-4" /></button>
           </header>
 
           {view === 'list' ? (
@@ -239,20 +490,83 @@ export default function SupportWidget() {
           ) : view === 'thread' && session ? (
             <>
               <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto bg-[#071425] p-4">
-                {loadingThread ? <div className="grid h-full place-items-center"><LoaderCircle className="size-5 animate-spin text-sky-300" /></div> : threadError && !thread ? <div className="grid h-full place-items-center text-center"><div><p className="text-sm text-white/55">The conversation could not load.</p><button type="button" onClick={() => refreshThread(session)} className="mt-3 text-sm font-semibold text-sky-300">Try again</button></div></div> : thread?.conversation.map((entry) => (
-                  <article key={entry.id} className={`flex ${entry.direction === 'customer' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[84%] rounded-2xl px-4 py-3 text-sm leading-6 ${entry.direction === 'customer' ? 'rounded-br-md bg-sky-300 text-[#041225]' : 'rounded-bl-md border border-white/10 bg-white/[0.06] text-white/75'}`}>
-                      <p className="whitespace-pre-wrap break-words">{entry.body}</p>
-                    </div>
-                  </article>
-                ))}
+                {loadingThread ? (
+                  <div className="grid h-full place-items-center"><LoaderCircle className="size-5 animate-spin text-sky-300" /></div>
+                ) : threadError && !thread ? (
+                  <div className="grid h-full place-items-center text-center"><div><p className="text-sm text-white/55">The conversation could not load.</p><button type="button" onClick={() => refreshThread(session)} className="mt-3 text-sm font-semibold text-sky-300">Try again</button></div></div>
+                ) : (
+                  <>
+                    {combinedConversation.map((entry) => {
+                      const isCustomer = entry.direction === 'customer';
+                      return (
+                        <article key={entry.id} className={`flex items-end gap-2 ${isCustomer ? 'justify-end' : 'justify-start'}`}>
+                          {!isCustomer && <AgentAvatar avatarUrl={agentAvatarUrl} name={agentName} size="sm" />}
+                          <div className={`max-w-[82%] rounded-2xl px-4 py-3 text-sm leading-6 ${isCustomer ? 'rounded-br-md bg-sky-300 text-[#041225]' : 'rounded-bl-md border border-white/10 bg-white/[0.06] text-white/85'} ${entry.pending ? 'opacity-75' : ''}`}>
+                            <p className="whitespace-pre-wrap break-words">{entry.body}</p>
+                            <p className={`mt-1 flex items-center gap-1 text-[10px] ${isCustomer ? 'text-[#041225]/65' : 'text-white/40'}`}>
+                              <span>{isCustomer ? 'You' : agentName}</span>
+                              <span>·</span>
+                              {entry.pending ? (
+                                <span className="inline-flex items-center gap-1"><Clock className="size-2.5" /> Sending</span>
+                              ) : (
+                                <span>{formatTime(entry.created_at)}</span>
+                              )}
+                            </p>
+                          </div>
+                        </article>
+                      );
+                    })}
+
+                    {isTypingVisible && (
+                      <div className="flex items-end gap-2" role="status" aria-live="polite">
+                        <AgentAvatar avatarUrl={agentAvatarUrl} name={typingDisplayName} size="sm" />
+                        <div className="inline-flex items-center gap-2 rounded-2xl rounded-bl-md border border-white/10 bg-white/[0.06] px-4 py-3 text-xs text-white/70">
+                          <span className="flex items-center gap-1" aria-hidden="true">
+                            <span className="size-1.5 animate-bounce rounded-full bg-sky-300 [animation-delay:0ms]" />
+                            <span className="size-1.5 animate-bounce rounded-full bg-sky-300 [animation-delay:150ms]" />
+                            <span className="size-1.5 animate-bounce rounded-full bg-sky-300 [animation-delay:300ms]" />
+                          </span>
+                          <span>{typingDisplayName} is typing...</span>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
-              <form onSubmit={sendReply} className="border-t border-white/10 bg-[#081a30] p-3">
-                <div className="flex items-end gap-2 rounded-xl border border-white/15 bg-white/[0.04] p-2 focus-within:border-sky-300/60">
-                  <textarea aria-label="Message support" rows={1} maxLength={10000} value={reply} onChange={(event) => setReply(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); void sendReply(); } }} placeholder="Write a message" className="max-h-28 min-h-10 flex-1 resize-none bg-transparent px-2 py-2 text-sm text-white outline-none placeholder:text-white/30" />
-                  <button type="submit" disabled={busy || !reply.trim()} aria-label="Send message" className="grid size-10 shrink-0 place-items-center rounded-lg bg-sky-300 text-[#041225] disabled:opacity-40"><Send className="size-4" /></button>
+
+              {thread?.status === 'closed' ? (
+                <div className="flex items-center justify-between gap-3 border-t border-white/10 bg-[#081a30] px-4 py-3 text-xs text-white/50">
+                  <span>This conversation is closed.</span>
+                  <button type="button" onClick={showNewConversation} className="inline-flex h-8 items-center gap-1 rounded-lg bg-sky-300 px-3 text-xs font-semibold text-[#041225]"><Plus className="size-3.5" /> New chat</button>
                 </div>
-              </form>
+              ) : (
+                <form onSubmit={sendReply} className="border-t border-white/10 bg-[#081a30] p-3">
+                  <div className="flex items-end gap-2 rounded-xl border border-white/15 bg-white/[0.04] p-2 focus-within:border-sky-300/60">
+                    <textarea
+                      ref={textareaRef}
+                      aria-label="Message support"
+                      rows={1}
+                      maxLength={10000}
+                      value={reply}
+                      onChange={(event) => {
+                        const next = event.target.value;
+                        setReply(next);
+                        notifyCustomerTyping(Boolean(next.trim()));
+                      }}
+                      onBlur={() => stopCustomerTyping(session)}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) {
+                          event.preventDefault();
+                          void sendReply();
+                        }
+                      }}
+                      placeholder="Write a message"
+                      className="max-h-28 min-h-10 flex-1 resize-none bg-transparent px-2 py-2 text-sm text-white outline-none placeholder:text-white/30"
+                    />
+                    <button type="submit" disabled={busy || !reply.trim()} aria-label="Send message" className="grid size-10 shrink-0 place-items-center rounded-lg bg-sky-300 text-[#041225] disabled:opacity-40"><Send className="size-4" /></button>
+                  </div>
+                </form>
+              )}
             </>
           ) : (
             <form onSubmit={startConversation} className="flex flex-1 flex-col justify-center p-5 text-white">
@@ -271,8 +585,14 @@ export default function SupportWidget() {
           )}
         </section>
       )}
-      <button type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-label={open ? 'Close flight support' : 'Open flight support'} className="ml-auto grid size-14 place-items-center rounded-2xl bg-sky-300 text-[#041225] shadow-[0_14px_35px_rgba(125,211,252,0.28)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(125,211,252,0.36)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-300">
-        {open ? <X className="size-5" /> : session ? <MessageCircle className="size-5" /> : <Headphones className="size-5" />}
+      <button type="button" onClick={toggleOpen} aria-expanded={open} aria-label={open ? 'Close flight support' : 'Open flight support'} className="relative ml-auto grid size-14 place-items-center overflow-hidden rounded-2xl bg-sky-300 text-[#041225] shadow-[0_14px_35px_rgba(125,211,252,0.28)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(125,211,252,0.36)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-300">
+        {open ? <X className="size-5" /> : agentAvatarUrl ? <img src={agentAvatarUrl} alt={agentName} className="size-full object-cover" /> : session ? <MessageCircle className="size-5" /> : <Headphones className="size-5" />}
+        {!open && hasUnreadReply && (
+          <span aria-label="New support reply" className="absolute right-1.5 top-1.5 flex size-3.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75" />
+            <span className="relative inline-flex size-3.5 rounded-full border-2 border-[#071425] bg-amber-400" />
+          </span>
+        )}
       </button>
     </div>
   );

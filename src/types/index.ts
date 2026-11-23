@@ -84,6 +84,19 @@ export type SupportConversationEntry = {
   created_at: string;
 };
 
+export type SupportProfile = {
+  display_name: string;
+  avatar_url: string | null;
+};
+
+export type SupportTypingEvent = {
+  ticket_id: string;
+  sender: 'owner' | 'customer';
+  sender_name?: string;
+  is_typing: boolean;
+  sent_at?: number;
+};
+
 export type TrackingSupportThread = {
   id: string;
   tracking_id: string;
@@ -93,6 +106,7 @@ export type TrackingSupportThread = {
   conversation: SupportConversationEntry[];
   channel: string;
   realtime: SupportRealtimeConfig;
+  support_profile?: SupportProfile;
 };
 
 export type StoredSupportSession = {

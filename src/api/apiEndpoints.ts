@@ -52,6 +52,17 @@ export const sendTrackingSupportMessage = async (
   return res.data;
 };
 
+export const sendTrackingSupportTyping = async (
+  session: StoredSupportSession,
+  isTyping: boolean,
+): Promise<void> => {
+  await apiClient.post(
+    `/tracking-support/${session.id}/typing/`,
+    { is_typing: isTyping },
+    { headers: supportHeaders(session) },
+  );
+};
+
 export const authorizeTrackingSupportRealtime = async (
   session: StoredSupportSession,
   socketId: string,
